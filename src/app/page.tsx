@@ -38,7 +38,7 @@ export default function HomePage() {
       {/* ABOUT */}
       <section className="py-16 relative">
         <div className="decor left-2 -top-2 text-4xl animate-floatY">🎓</div>
-        <SectionHeader title="Our Story" subtitle="We believe learning should be inspiring, collaborative, and accessible." />
+        <SectionHeader title="Our Story✨" subtitle="We believe learning should be inspiring, collaborative, and accessible." />
         <p className="text-white/85 max-w-3xl">
           UniHero started with a simple idea — make student life easier. With community support, clear study guides,
           and simple tools, every student can grow with confidence.
