@@ -17,22 +17,19 @@ export default function AboutPage() {
       </p>
 
       {/* ⭐ Auto-sliding timeline */}
+      {/* Agar TimelineAuto da hint ko‘rsatmaslik opsiyasi bo‘lsa: showHint={false} */}
       <TimelineAuto />
 
       <div className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">
-        <h3 className="mb-2 text-xl font-semibold">What&apos;s next?</h3>
+        <h3 className="text-xl font-semibold mb-2">What&apos;s next?</h3>
         <p className="text-white/70">
           We are expanding resources, events and lightweight tools to help
           students learn faster. If you want to collaborate or contribute,
           reach us via{" "}
-          <a
-            className="underline"
-            href="https://t.me/UniHero_admin"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a className="underline" href="https://t.me/UniHero_admin">
             Telegram
-          </a>.
+          </a>
+          .
         </p>
       </div>
     </div>
