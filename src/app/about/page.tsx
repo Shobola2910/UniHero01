@@ -1,16 +1,6 @@
+// src/app/about/page.tsx
 import SectionHeader from "@/components/SectionHeader";
 import TimelineAuto from "@/components/TimelineAuto";
-// src/components/SectionHeader.tsx
-export default function SectionHeader({ title, subtitle }:{
-  title: string; subtitle?: string;
-}) {
-  return (
-    <div className="mb-4">
-      <h2 className="text-2xl md:text-3xl font-bold">{title}</h2>
-      {subtitle && <p className="opacity-70 mt-1">{subtitle}</p>}
-    </div>
-  );
-}
 
 export default function AboutPage() {
   return (
@@ -30,11 +20,14 @@ export default function AboutPage() {
       <TimelineAuto />
 
       <div className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">
-        <h3 className="text-xl font-semibold mb-2">What&apos;s next?</h3>
+        <h3 className="mb-2 text-xl font-semibold">What&apos;s next?</h3>
         <p className="text-white/70">
           We are expanding resources, events and lightweight tools to help
           students learn faster. If you want to collaborate or contribute,
-          reach us via <a className="underline" href="https://t.me/UniHero_admin">Telegram</a>.
+          reach us via{" "}
+          <a className="underline" href="https://t.me/UniHero_admin" target="_blank">
+            Telegram
+          </a>.
         </p>
       </div>
     </div>
