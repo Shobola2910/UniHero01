@@ -25,7 +25,12 @@ export default function AboutPage() {
           We are expanding resources, events and lightweight tools to help
           students learn faster. If you want to collaborate or contribute,
           reach us via{" "}
-          <a className="underline" href="https://t.me/UniHero_admin" target="_blank">
+          <a
+            className="underline"
+            href="https://t.me/UniHero_admin"
+            target="_blank"
+            rel="noreferrer"
+          >
             Telegram
           </a>.
         </p>
