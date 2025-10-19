@@ -33,6 +33,14 @@ const Card = ({
   </button>
 );
 
+// Wikipedia URL helper: slug bo'lsa to'g'ridan-to'g'ri, bo'lmasa qidiruv
+const wikiUrl = (name: string, slug?: string) =>
+  slug
+    ? `https://en.wikipedia.org/wiki/${encodeURIComponent(slug)}`
+    : `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(
+        name
+      )}&go=Go`;
+
 export default function ResourcesGrid() {
   const [modal, setModal] = useState<ModalState>({
     open: false,
@@ -42,26 +50,27 @@ export default function ResourcesGrid() {
 
   const close = () => setModal((m) => ({ ...m, open: false }));
 
-  // ——— Unique quote picker with localStorage memory
+  // Unique quote with memory
   const nextUniqueQuote = useCallback(() => {
     const key = "uh_seen_quotes";
-    const seenRaw = typeof window !== "undefined" ? localStorage.getItem(key) : null;
+    const seenRaw =
+      typeof window !== "undefined" ? localStorage.getItem(key) : null;
     const seen = new Set<number>(seenRaw ? JSON.parse(seenRaw) : []);
 
     const pool = QUOTES.map((_, i) => i).filter((i) => !seen.has(i));
     const idx =
       pool.length === 0
-        ? Math.floor(Math.random() * QUOTES.length) // all seen → allow random
+        ? Math.floor(Math.random() * QUOTES.length)
         : pool[Math.floor(Math.random() * pool.length)];
 
     if (pool.length > 0) {
       seen.add(idx);
       localStorage.setItem(key, JSON.stringify(Array.from(seen)));
     }
-    return QUOTES[idx];
+    return { quote: QUOTES[idx], index: idx };
   }, []);
 
-  // ——— Cards handlers
+  // Handlers
   const onAssignments = useCallback(() => {
     setModal({
       open: true,
@@ -78,7 +87,7 @@ export default function ResourcesGrid() {
             >
               book help via our Telegram bot
             </a>
-            . Send the <b>subject</b>, <b>deadline</b>, and a short description of the problem — we’ll route it to the right person.
+            . Send the <b>subject</b>, <b>deadline</b>, and a short description — we’ll route it to the right person.
           </p>
           <ul className="list-disc pl-5 text-white/80">
             <li>Attach files/screenshots if possible.</li>
@@ -109,7 +118,7 @@ export default function ResourcesGrid() {
             . Share the <b>course</b> and <b>exam date</b>. We’ll send updated summaries, formula sheets and past papers.
           </p>
           <p className="text-white/80">
-            Tip: also follow the news channel for fresh drops →{" "}
+            Tip: also follow →{" "}
             <a
               href="https://t.me/UniHero_news"
               target="_blank"
@@ -132,13 +141,18 @@ export default function ResourcesGrid() {
       content: (
         <div className="space-y-3">
           <ul className="list-disc pl-5">
-            <li><b>3 MITs</b>: pick your 3 Most Important Tasks for the day.</li>
-            <li><b>Pomodoro 25/5</b>: 25 minutes deep focus + 5 minutes break. Do 4 cycles → take a longer 15–30 min break.</li>
-            <li>Turn off notifications. Use “Do Not Disturb”.</li>
-            <li>Study in blocks by course/topic. Track time you actually studied.</li>
+            <li>
+              <b>3 MITs</b>: pick your 3 Most Important Tasks for the day.
+            </li>
+            <li>
+              <b>Pomodoro 25/5</b>: 25 minutes deep focus + 5 minutes break. 4
+              cycles → 15–30 min longer break.
+            </li>
+            <li>Turn off notifications (DND).</li>
+            <li>Study in blocks by course/topic. Track your time.</li>
           </ul>
           <p className="text-white/80">
-            Tools: a physical timer or any simple mobile timer is enough. Consistency beats intensity.
+            Tools: any simple timer is enough. Consistency beats intensity.
           </p>
         </div>
       ),
@@ -146,14 +160,25 @@ export default function ResourcesGrid() {
   }, []);
 
   const onMotivation = useCallback(() => {
-    const q = nextUniqueQuote();
+    const { quote: q } = nextUniqueQuote();
     setModal({
       open: true,
       title: "Motivation — Today’s Quote",
       content: (
         <blockquote className="rounded-xl bg-white/5 p-4 ring-1 ring-white/10">
           <p className="text-[15px] leading-relaxed">“{q.text}”</p>
-          <footer className="mt-2 text-sm text-white/70">— {q.author}</footer>
+          <footer className="mt-2 text-sm text-white/70">
+            —{" "}
+            <a
+              href={wikiUrl(q.author, q.wiki)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-white"
+              title={`Read about ${q.author} on Wikipedia`}
+            >
+              {q.author} ↗
+            </a>
+          </footer>
         </blockquote>
       ),
     });
@@ -200,4 +225,3 @@ export default function ResourcesGrid() {
     </>
   );
 }
-
