@@ -16,7 +16,7 @@ export default function HomePage() {
           <div className="absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/10" />
           <div className="relative">
             <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/90 ring-1 ring-white/15">
-              ✨ Student-first • Fast & Friendly
+              ✨ For Students, By Students
             </p>
 
             <h1 className="text-3xl font-extrabold leading-tight md:text-5xl">
