@@ -13,7 +13,7 @@ export default function AdviceModal({
   title: string;
   children: ReactNode;
 }) {
-  // ESC bilan yopish
+  // ESC tugmasi bilan yopish
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
@@ -54,4 +54,3 @@ export default function AdviceModal({
     </div>
   );
 }
-
