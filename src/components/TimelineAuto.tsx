@@ -127,9 +127,6 @@ export default function TimelineAuto() {
           ))}
         </div>
       </div>
-      <p className="px-6 pb-4 text-xs text-white/60">
-        Tip: cursorni o‘ngga/chopga siljitsangiz — timeline shu tomonga tezlashadi. Mobil’da – drag.
-      </p>
     </section>
   );
 }
