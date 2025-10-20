@@ -1,13 +1,13 @@
 // src/components/ResourcesGrid.tsx
 "use client";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, type ReactNode } from "react";
 import AdviceModal from "@/components/AdviceModal";
 import { QUOTES } from "@/lib/quotes";
 
 type ModalState = {
   open: boolean;
   title: string;
-  content: JSX.Element | null;
+  content: ReactNode | null;
 };
 
 const Card = ({
@@ -33,7 +33,7 @@ const Card = ({
   </button>
 );
 
-// Wikipedia URL helper: slug bo'lsa to'g'ridan-to'g'ri, bo'lmasa qidiruv
+// Wikipedia URL helper: if slug present → direct; else → search
 const wikiUrl = (name: string, slug?: string) =>
   slug
     ? `https://en.wikipedia.org/wiki/${encodeURIComponent(slug)}`
