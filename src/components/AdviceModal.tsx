@@ -1,6 +1,6 @@
 // src/components/AdviceModal.tsx
 "use client";
-import { ReactNode, useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
 
 export default function AdviceModal({
   open,
@@ -13,7 +13,7 @@ export default function AdviceModal({
   title: string;
   children: ReactNode;
 }) {
-  // ESC tugmasi bilan yopish
+  // ESC to close
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
@@ -40,7 +40,7 @@ export default function AdviceModal({
       >
         <div className="flex items-start justify-between gap-3">
           <h3 className="text-lg md:text-xl font-semibold">{title}</h3>
-          <button
+        <button
             className="shrink-0 rounded-full px-2 py-1 text-white/70 hover:text-white hover:bg-white/10 transition"
             onClick={onClose}
             aria-label="Close"
