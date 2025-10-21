@@ -1,14 +1,23 @@
 // src/components/ResourcesGrid.tsx
 "use client";
-import { useCallback, useMemo, useState, type ReactNode } from "react";
+
+import { useCallback, useMemo, useState } from "react";
 import AdviceModal from "@/components/AdviceModal";
 import { QUOTES } from "@/lib/quotes";
 
 type ModalState = {
   open: boolean;
   title: string;
-  content: ReactNode | null;
+  content: React.ReactNode;
 };
+
+// Wikipedia URL helper: slug bo‘lsa to‘g‘ridan-to‘g‘ri, bo‘lmasa qidiruvga
+const wikiUrl = (name: string, slug?: string) =>
+  slug
+    ? `https://en.wikipedia.org/wiki/${encodeURIComponent(slug)}`
+    : `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(
+        name
+      )}&go=Go`;
 
 const Card = ({
   title,
@@ -33,14 +42,6 @@ const Card = ({
   </button>
 );
 
-// Wikipedia URL helper: if slug present → direct; else → search
-const wikiUrl = (name: string, slug?: string) =>
-  slug
-    ? `https://en.wikipedia.org/wiki/${encodeURIComponent(slug)}`
-    : `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(
-        name
-      )}&go=Go`;
-
 export default function ResourcesGrid() {
   const [modal, setModal] = useState<ModalState>({
     open: false,
@@ -50,24 +51,25 @@ export default function ResourcesGrid() {
 
   const close = () => setModal((m) => ({ ...m, open: false }));
 
-  // Unique quote with memory
+  // Unique quote (localStorage’da koʻrilgan indekslar saqlanadi).
   const nextUniqueQuote = useCallback(() => {
-    const key = "uh_seen_quotes";
+    const KEY = "uh_seen_quotes";
     const seenRaw =
-      typeof window !== "undefined" ? localStorage.getItem(key) : null;
+      typeof window !== "undefined" ? localStorage.getItem(KEY) : null;
     const seen = new Set<number>(seenRaw ? JSON.parse(seenRaw) : []);
-
     const pool = QUOTES.map((_, i) => i).filter((i) => !seen.has(i));
-    const idx =
-      pool.length === 0
-        ? Math.floor(Math.random() * QUOTES.length)
-        : pool[Math.floor(Math.random() * pool.length)];
 
+    const pick =
+      pool.length > 0
+        ? pool[Math.floor(Math.random() * pool.length)]
+        : Math.floor(Math.random() * QUOTES.length);
+
+    // Faqat qolganlari borida qo‘shamiz — hammasi tugasa, qayta boshlaydi
     if (pool.length > 0) {
-      seen.add(idx);
-      localStorage.setItem(key, JSON.stringify(Array.from(seen)));
+      seen.add(pick);
+      localStorage.setItem(KEY, JSON.stringify(Array.from(seen)));
     }
-    return { quote: QUOTES[idx], index: idx };
+    return QUOTES[pick];
   }, []);
 
   // Handlers
@@ -78,21 +80,22 @@ export default function ResourcesGrid() {
       content: (
         <div className="space-y-3">
           <p>
-            Having trouble with an assignment? You can{" "}
+            Vazifa bilan qiyinchilik bormi?{" "}
             <a
               href="https://t.me/UniHero_BOT"
               target="_blank"
               rel="noreferrer"
               className="underline font-medium"
             >
-              book help via our Telegram bot
-            </a>
-            . Send the <b>subject</b>, <b>deadline</b>, and a short description — we’ll route it to the right person.
+              bot orqali book
+            </a>{" "}
+            qiling: <b>fan</b>, <b>deadline</b> va qisqacha ta’rif yozing —
+            mos mutaxassisga yo‘naltiramiz.
           </p>
           <ul className="list-disc pl-5 text-white/80">
-            <li>Attach files/screenshots if possible.</li>
-            <li>Be clear about constraints (format, word count, rubric).</li>
-            <li>Ask early — more time = better results.</li>
+            <li>Fayl/screenshot biriktirsangiz yanada tezlashadi.</li>
+            <li>Talablar (format, so‘z soni, rubrika) aniq bo‘lsin.</li>
+            <li>Erta so‘rang — ko‘proq vaqt = yaxshi natija.</li>
           </ul>
         </div>
       ),
@@ -106,7 +109,7 @@ export default function ResourcesGrid() {
       content: (
         <div className="space-y-3">
           <p>
-            For the <b>latest & trusted</b> materials, contact{" "}
+            Eng <b>so‘nggi va ishonchli</b> materiallar uchun{" "}
             <a
               href="https://t.me/UniHero_admin"
               target="_blank"
@@ -114,11 +117,12 @@ export default function ResourcesGrid() {
               className="underline font-medium"
             >
               @UniHero_admin
-            </a>
-            . Share the <b>course</b> and <b>exam date</b>. We’ll send updated summaries, formula sheets and past papers.
+            </a>{" "}
+            bilan bog‘laning. <b>kurs</b> va <b>imtihon sanasi</b>ni yozing —
+            yangilangan konspektlar, formula sheet va past papers yuboramiz.
           </p>
           <p className="text-white/80">
-            Tip: also follow →{" "}
+            Shuningdek obuna bo‘ling →{" "}
             <a
               href="https://t.me/UniHero_news"
               target="_blank"
@@ -142,25 +146,23 @@ export default function ResourcesGrid() {
         <div className="space-y-3">
           <ul className="list-disc pl-5">
             <li>
-              <b>3 MITs</b>: pick your 3 Most Important Tasks for the day.
+              <b>3 MITs</b> — kuningizning 3 ta eng muhim vazifasini tanlang.
             </li>
             <li>
-              <b>Pomodoro 25/5</b>: 25 minutes deep focus + 5 minutes break. 4
-              cycles → 15–30 min longer break.
+              <b>Pomodoro 25/5</b> — 25 daqiqa chuqur fokus + 5 daqiqa tanaffus.
+              4 sikl → 15–30 daqiqa katta tanaffus.
             </li>
-            <li>Turn off notifications (DND).</li>
-            <li>Study in blocks by course/topic. Track your time.</li>
+            <li>Bildirishnomalarni o‘chirib, chalg‘ituvchi narsalarni yoping.</li>
+            <li>Vaqtni yozib boring; bloklar bo‘yicha o‘qing.</li>
           </ul>
-          <p className="text-white/80">
-            Tools: any simple timer is enough. Consistency beats intensity.
-          </p>
+          <p className="text-white/80">Oddiy taymer yetarli — muhim narsa izchillik.</p>
         </div>
       ),
     });
   }, []);
 
   const onMotivation = useCallback(() => {
-    const { quote: q } = nextUniqueQuote();
+    const q = nextUniqueQuote();
     setModal({
       open: true,
       title: "Motivation — Today’s Quote",
@@ -174,7 +176,7 @@ export default function ResourcesGrid() {
               target="_blank"
               rel="noopener noreferrer"
               className="underline hover:text-white"
-              title={`Read about ${q.author} on Wikipedia`}
+              title={`Open ${q.author} on Wikipedia`}
             >
               {q.author} ↗
             </a>
