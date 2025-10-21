@@ -7,15 +7,15 @@ export const metadata: Metadata = {
   description:
     "Practical resources, a helpful community, and simple tools. Learn smarter with study guides, templates and quick support.",
   icons: {
-    icon: "/icon.png",              // app/icon.png
-    apple: "/apple-icon.png",       // app/apple-icon.png
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
     shortcut: "/icon.png",
   },
   openGraph: {
     title: "UniHero — For Students, By Students",
     description:
       "Practical resources, a helpful community, and simple tools. Learn smarter with study guides, templates and quick support.",
-    url: "https://your-domain.tld/",
+    url: "https://unihero-three.vercel.app/", // <- put your domain
     siteName: "UniHero",
     images: [{ url: "/opengraph-image.png", width: 1200, height: 630 }],
     type: "website",
