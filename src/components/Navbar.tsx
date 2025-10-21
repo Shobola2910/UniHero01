@@ -1,49 +1,36 @@
+// src/components/Navbar.tsx
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-  const link = "hover:opacity-80 transition";
   return (
-    <header className={`fixed inset-x-0 top-0 z-50 transition-all ${scrolled ? "backdrop-blur bg-white/5 shadow" : "bg-transparent"}`}>
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-        <Link href="/" className="font-semibold flex items-center gap-2">
-          <img alt="UniHero logo" src="/logo.png" className="h-7 w-7" /> <span>UniHero</span>
-        </Link>
-        <div className="hidden gap-6 md:flex">
-          <Link href="/" className={link}>Home</Link>
-          <Link href="/about" className={link}>About</Link>
-          <Link href="/resources" className={link}>Resources</Link>
-          <Link href="/events" className={link}>Events</Link>
-          <Link href="/contact" className={link}>Contact</Link>
-          <a href="/news" className="hover:opacity-80">News</a>
-        </div>
-        <button
-          aria-label="Open Menu"
-          className="md:hidden rounded-xl border border-white/20 px-3 py-1.5 hover:bg-white/10 transition"
-          onClick={() => setOpen(v => !v)}
-        >
-          ☰
-        </button>
-      </nav>
-      {open && (
-        <div className="md:hidden bg-[#0A1F44] border-t border-white/10 shadow-soft">
-          <div className="mx-auto max-w-6xl px-4 py-4 flex flex-col gap-3">
-            <Link onClick={()=>setOpen(false)} href="/" className={link}>Home</Link>
-            <Link onClick={()=>setOpen(false)} href="/about" className={link}>About</Link>
-            <Link onClick={()=>setOpen(false)} href="/resources" className={link}>Resources</Link>
-            <Link onClick={()=>setOpen(false)} href="/events" className={link}>Events</Link>
-            <Link onClick={()=>setOpen(false)} href="/contact" className={link}>Contact</Link>
+    <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-[rgba(6,18,46,0.6)] backdrop-blur">
+      <div className="mx-auto flex h-16 md:h-20 max-w-6xl items-center justify-between px-4">
+        <Link href="/" className="flex items-center gap-3 md:gap-4">
+          <div className="relative h-9 w-9 md:h-12 md:w-12">
+            <Image
+              src="/logo.png"            // keep your best transparent logo here
+              alt="UniHero"
+              fill
+              className="object-contain drop-shadow"
+              priority
+            />
           </div>
-        </div>
-      )}
+          <span className="text-xl md:text-2xl font-extrabold tracking-tight select-none">
+            UniHero
+          </span>
+        </Link>
+
+        <nav className="hidden md:flex items-center gap-6 text-white/90">
+          <Link href="/">Home</Link>
+          <Link href="/about">About</Link>
+          <Link href="/resources">Resources</Link>
+          <Link href="/events">Events</Link>
+          <Link href="/contact">Contact</Link>
+          <Link href="/news">News</Link>
+        </nav>
+      </div>
     </header>
   );
 }
