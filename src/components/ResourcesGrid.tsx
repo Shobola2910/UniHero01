@@ -11,7 +11,7 @@ type ModalState = {
   content: React.ReactNode;
 };
 
-// Wikipedia URL helper: slug bo‘lsa to‘g‘ridan-to‘g‘ri, bo‘lmasa qidiruvga
+// Wikipedia URL helper
 const wikiUrl = (name: string, slug?: string) =>
   slug
     ? `https://en.wikipedia.org/wiki/${encodeURIComponent(slug)}`
@@ -51,7 +51,7 @@ export default function ResourcesGrid() {
 
   const close = () => setModal((m) => ({ ...m, open: false }));
 
-  // Unique quote (localStorage’da koʻrilgan indekslar saqlanadi).
+  // Unique quote with memory
   const nextUniqueQuote = useCallback(() => {
     const KEY = "uh_seen_quotes";
     const seenRaw =
@@ -64,7 +64,6 @@ export default function ResourcesGrid() {
         ? pool[Math.floor(Math.random() * pool.length)]
         : Math.floor(Math.random() * QUOTES.length);
 
-    // Faqat qolganlari borida qo‘shamiz — hammasi tugasa, qayta boshlaydi
     if (pool.length > 0) {
       seen.add(pick);
       localStorage.setItem(KEY, JSON.stringify(Array.from(seen)));
@@ -72,30 +71,31 @@ export default function ResourcesGrid() {
     return QUOTES[pick];
   }, []);
 
-  // Handlers
+  /* -------- Handlers (EN content + emojis) -------- */
+
   const onAssignments = useCallback(() => {
     setModal({
       open: true,
-      title: "Assignments — Quick Help",
+      title: "Assignments — Quick Help 📚",
       content: (
         <div className="space-y-3">
           <p>
-            Vazifa bilan qiyinchilik bormi?{" "}
+            Stuck on an assignment? You can{" "}
             <a
               href="https://t.me/UniHero_BOT"
               target="_blank"
               rel="noreferrer"
               className="underline font-medium"
             >
-              bot orqali book
-            </a>{" "}
-            qiling: <b>fan</b>, <b>deadline</b> va qisqacha ta’rif yozing —
-            mos mutaxassisga yo‘naltiramiz.
+              book help via our Telegram bot 🤖
+            </a>
+            . Send the <b>subject</b>, <b>deadline</b>, and a short description —
+            we’ll route it to the right person.
           </p>
           <ul className="list-disc pl-5 text-white/80">
-            <li>Fayl/screenshot biriktirsangiz yanada tezlashadi.</li>
-            <li>Talablar (format, so‘z soni, rubrika) aniq bo‘lsin.</li>
-            <li>Erta so‘rang — ko‘proq vaqt = yaxshi natija.</li>
+            <li>Attach files/screenshots if possible 📎.</li>
+            <li>Be clear about constraints (format, word count, rubric) ✍️.</li>
+            <li>Ask early — more time = better results ⏳.</li>
           </ul>
         </div>
       ),
@@ -105,11 +105,11 @@ export default function ResourcesGrid() {
   const onExamPrep = useCallback(() => {
     setModal({
       open: true,
-      title: "Exam Prep — Verified Materials",
+      title: "Exam Prep — Verified Materials 🧠",
       content: (
         <div className="space-y-3">
           <p>
-            Eng <b>so‘nggi va ishonchli</b> materiallar uchun{" "}
+            For the <b>latest & trusted</b> materials, contact{" "}
             <a
               href="https://t.me/UniHero_admin"
               target="_blank"
@@ -117,12 +117,12 @@ export default function ResourcesGrid() {
               className="underline font-medium"
             >
               @UniHero_admin
-            </a>{" "}
-            bilan bog‘laning. <b>kurs</b> va <b>imtihon sanasi</b>ni yozing —
-            yangilangan konspektlar, formula sheet va past papers yuboramiz.
+            </a>
+            . Share your <b>course</b> and <b>exam date</b>. We’ll send updated
+            summaries, formula sheets, and past papers.
           </p>
           <p className="text-white/80">
-            Shuningdek obuna bo‘ling →{" "}
+            Also follow →{" "}
             <a
               href="https://t.me/UniHero_news"
               target="_blank"
@@ -130,8 +130,8 @@ export default function ResourcesGrid() {
               className="underline"
             >
               @UniHero_news
-            </a>
-            .
+            </a>{" "}
+            for drops and announcements 📢.
           </p>
         </div>
       ),
@@ -141,21 +141,23 @@ export default function ResourcesGrid() {
   const onTime = useCallback(() => {
     setModal({
       open: true,
-      title: "Time Management — Focus & Pomodoro",
+      title: "Time Management — Focus & Pomodoro ⏱️",
       content: (
         <div className="space-y-3">
           <ul className="list-disc pl-5">
             <li>
-              <b>3 MITs</b> — kuningizning 3 ta eng muhim vazifasini tanlang.
+              ✅ <b>3 MITs</b>: pick your 3 Most Important Tasks for the day.
             </li>
             <li>
-              <b>Pomodoro 25/5</b> — 25 daqiqa chuqur fokus + 5 daqiqa tanaffus.
-              4 sikl → 15–30 daqiqa katta tanaffus.
+              ⏳ <b>Pomodoro 25/5</b>: 25 minutes deep focus + 5 minutes break.
+              4 cycles → 15–30 min long break.
             </li>
-            <li>Bildirishnomalarni o‘chirib, chalg‘ituvchi narsalarni yoping.</li>
-            <li>Vaqtni yozib boring; bloklar bo‘yicha o‘qing.</li>
+            <li>🔕 Turn on Do Not Disturb and silence notifications.</li>
+            <li>📚 Study in blocks by course/topic. Track your time.</li>
           </ul>
-          <p className="text-white/80">Oddiy taymer yetarli — muhim narsa izchillik.</p>
+          <p className="text-white/80">
+            Tools: any simple timer works. <b>Consistency &gt; intensity</b>.
+          </p>
         </div>
       ),
     });
@@ -165,7 +167,7 @@ export default function ResourcesGrid() {
     const q = nextUniqueQuote();
     setModal({
       open: true,
-      title: "Motivation — Today’s Quote",
+      title: "Motivation — Today’s Quote 🌟",
       content: (
         <blockquote className="rounded-xl bg-white/5 p-4 ring-1 ring-white/10">
           <p className="text-[15px] leading-relaxed">“{q.text}”</p>
