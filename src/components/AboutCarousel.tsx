@@ -1,39 +1,38 @@
 // src/components/AboutCarousel.tsx
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
-type Slide = {
-  img: string;          // public papkaga nisbiy yo'l: "/about/1.jpg"
-  badge?: string;       // masalan: "2024 · Oct"
-  title: string;        // sarlavha
-  caption?: string;     // qisqa izoh
+type Milestone = {
+  emoji: string;
+  date: string;
+  title: string;
 };
 
 export default function AboutCarousel({
-  slides,
-  intervalMs = 4500,     // avto aylanish tezligi
+  items,
+  intervalMs = 10000, // har 10s da almashadi
 }: {
-  slides: Slide[];
+  items: Milestone[];
   intervalMs?: number;
 }) {
+  const n = items.length;
   const [i, setI] = useState(0);
-  const n = slides.length;
+  const [dx, setDx] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const startX = useRef<number | null>(null);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const next = () => setI((p) => (p + 1) % n);
   const prev = () => setI((p) => (p - 1 + n) % n);
-  const go = (k: number) => setI(k);
 
-  // Auto-rotate (pause on hover)
-  const start = () => {
-    stop();
-    timer.current = setInterval(next, intervalMs);
-  };
   const stop = () => {
     if (timer.current) clearInterval(timer.current);
     timer.current = null;
+  };
+  const start = () => {
+    stop();
+    timer.current = setInterval(next, intervalMs);
   };
 
   useEffect(() => {
@@ -42,63 +41,70 @@ export default function AboutCarousel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [intervalMs, n]);
 
-  // Touch / swipe
-  const touchX = useRef<number | null>(null);
-  const onTouchStart = (e: React.TouchEvent) => {
-    touchX.current = e.touches[0].clientX;
+  // Pointer (mouse/touch) drag
+  const onPointerDown = (e: React.PointerEvent) => {
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    startX.current = e.clientX;
+    setDragging(true);
     stop();
   };
-  const onTouchEnd = (e: React.TouchEvent) => {
-    const x = e.changedTouches[0].clientX;
-    if (touchX.current !== null) {
-      const dx = x - touchX.current;
-      if (Math.abs(dx) > 40) dx > 0 ? prev() : next();
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (startX.current === null) return;
+    setDx(e.clientX - startX.current);
+  };
+  const onPointerUp = () => {
+    if (startX.current !== null) {
+      const threshold = 60; // qancha ko‘chsa — sahifa almashadi
+      if (dx > threshold) prev();
+      else if (dx < -threshold) next();
     }
-    touchX.current = null;
+    startX.current = null;
+    setDx(0);
+    setDragging(false);
     start();
   };
 
   return (
     <div
-      className="relative overflow-hidden rounded-3xl ring-1 ring-white/10 bg-white/5"
-      onMouseEnter={stop}
-      onMouseLeave={start}
-      onTouchStart={onTouchStart}
-      onTouchEnd={onTouchEnd}
+      className="relative overflow-hidden rounded-3xl ring-1 ring-white/10 bg-white/5 select-none"
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+      onMouseLeave={() => dragging && onPointerUp()}
     >
+      {/* Blurli yon chetlar */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-10 md:w-16 bg-gradient-to-r from-[#0b1e3b]/70 to-transparent backdrop-blur-[2px]" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-10 md:w-16 bg-gradient-to-l from-[#0b1e3b]/70 to-transparent backdrop-blur-[2px]" />
+
       {/* Track */}
       <div
-        className="flex transition-transform duration-500 ease-out"
-        style={{ transform: `translateX(-${i * 100}%)` }}
+        className={`flex transition-transform duration-500 ease-out ${
+          dragging ? "!duration-0 cursor-grabbing" : "cursor-grab"
+        }`}
+        style={{ transform: `translateX(calc(${-i * 100}% + ${dx}px))` }}
       >
-        {slides.map((s, idx) => (
-          <div key={idx} className="relative h-[280px] md:h-[360px] w-full flex-none">
-            <Image
-              src={s.img}
-              alt={s.title}
-              fill
-              priority={idx === 0}
-              className="object-cover"
-            />
-
-            {/* Gradient/overlay */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-black/50 via-black/10 to-transparent" />
-
-            {/* Text box */}
-            <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
-              {s.badge && (
-                <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-medium ring-1 ring-white/20">
-                  {s.badge}
-                </span>
-              )}
-              <h3 className="mt-2 text-lg md:text-xl font-semibold drop-shadow">
-                {s.title}
-              </h3>
-              {s.caption && (
-                <p className="mt-1 text-sm text-white/85 drop-shadow">
-                  {s.caption}
+        {items.map((m, idx) => (
+          <div
+            key={idx}
+            className="w-full flex-none p-5 md:p-6"
+            // har bir slayd butun kenglik
+          >
+            <div className="h-[210px] md:h-[240px] rounded-2xl bg-gradient-to-br from-white/10 to-white/5 ring-1 ring-white/10 shadow-sm flex items-center gap-4 px-5">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/20 text-2xl">
+                {m.emoji}
+              </div>
+              <div className="min-w-0">
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium ring-1 ring-white/15">
+                  {m.date}
+                </div>
+                <h3 className="mt-2 text-lg md:text-xl font-semibold leading-snug">
+                  {m.title}
+                </h3>
+                <p className="mt-1 text-sm text-white/75">
+                  UniHero timeline highlight
                 </p>
-              )}
+              </div>
             </div>
           </div>
         ))}
@@ -121,19 +127,18 @@ export default function AboutCarousel({
       </button>
 
       {/* Dots */}
-      <div className="pointer-events-none absolute bottom-3 left-0 right-0 flex justify-center gap-2">
-        {slides.map((_, k) => (
+      <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
+        {items.map((_, k) => (
           <button
             key={k}
+            onClick={() => setI(k)}
             aria-label={`Go to slide ${k + 1}`}
-            className={`pointer-events-auto h-2.5 w-2.5 rounded-full ring-1 ring-white/40 transition ${
+            className={`h-2.5 w-2.5 rounded-full ring-1 ring-white/40 transition ${
               i === k ? "bg-white/90" : "bg-white/30 hover:bg-white/50"
             }`}
-            onClick={() => go(k)}
           />
         ))}
       </div>
     </div>
   );
 }
-
