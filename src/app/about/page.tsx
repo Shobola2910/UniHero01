@@ -53,7 +53,16 @@ export default function AboutPage() {
   const lastScrollRef = useRef(0);
   const WHEEL_COOLDOWN = 500;
 
-  useEffect(() => {
+  // src/app/about/page.tsx (inside your useEffect)
+useEffect(() => {
+  if (hoverRef.current) return;
+  if (timerRef.current) clearInterval(timerRef.current);
+  timerRef.current = setInterval(() => setI((x) => (x + 1) % n), 5000);
+  return () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+  };
+}, [i, n]);
+
     const onKey = (e: KeyboardEvent) => {
       if (!containerRef.current) return;
       const inside =
