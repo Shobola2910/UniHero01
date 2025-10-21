@@ -7,9 +7,9 @@ export default function SectionHeader({
   subtitle?: string;
 }) {
   return (
-    <header className="mb-4">
+    <div className="mb-2">
       <h2 className="text-2xl md:text-3xl font-bold">{title}</h2>
-      {subtitle && <p className="mt-1 opacity-70">{subtitle}</p>}
-    </header>
+      {subtitle && <p className="mt-1 text-white/70">{subtitle}</p>}
+    </div>
   );
 }
