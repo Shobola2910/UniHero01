@@ -19,6 +19,7 @@ const ITEMS: Item[] = [
   { emoji: "🎉", date: "2025 · May", title: "100 students success" },
   { emoji: "🧑‍🤝‍🧑", date: "2024 · Oct", title: "2 anonym founders" },
   { emoji: "🤖", date: "2024 · Dec", title: "UniHero Bot created" },
+  { emoji: "📥", date: "2025 · June", title: "UniHero Bot 200+ users" },
 ];
 
 export default function TimelineAuto({
