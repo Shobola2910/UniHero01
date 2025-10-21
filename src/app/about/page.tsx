@@ -19,61 +19,48 @@ export default function AboutPage() {
   const [i, setI] = useState(0);
   const n = SLIDES.length;
 
-  const prev = useCallback(() => {
-    setI((x) => (x - 1 + n) % n);
-  }, [n]);
-
-  const next = useCallback(() => {
-    setI((x) => (x + 1) % n);
-  }, [n]);
+  const prev = useCallback(() => setI((x) => (x - 1 + n) % n), [n]);
+  const next = useCallback(() => setI((x) => (x + 1) % n), [n]);
 
   // autoplay 5s — pause on hover
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const hoverRef = useRef(false);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const hovering = useRef(false);
 
   useEffect(() => {
-    if (hoverRef.current) return;
+    if (hovering.current) return;
     if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setI((x) => (x + 1) % n);
-    }, 5000);
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
+    timerRef.current = setInterval(() => setI((x) => (x + 1) % n), 5000);
+    return () => timerRef.current && clearInterval(timerRef.current);
   }, [i, n]);
 
-  // roles for positions: center / right / left / hidden
-  const roles = useMemo(() => {
-    return SLIDES.map((_, k) => {
-      const d = (k - i + n) % n;
-      if (d === 0) return "center";
-      if (d === 1) return "right";
-      if (d === n - 1) return "left";
-      return "hidden";
-    });
-  }, [i, n]);
-
-  // keyboard navigation (← / →)
   useEffect(() => {
-    function onKey(e: KeyboardEvent) {
+    const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") prev();
       if (e.key === "ArrowRight") next();
-    }
-    window.addEventListener("keydown", onKey);
-    return () => {
-      window.removeEventListener("keydown", onKey);
     };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [next, prev]);
 
-  // mouse wheel navigation (throttled)
-  const lastWheelRef = useRef(0);
-  const onWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+  const lastWheel = useRef(0);
+  const onWheel: React.WheelEventHandler<HTMLDivElement> = (e) => {
     const now = Date.now();
-    if (now - lastWheelRef.current < 400) return;
-    lastWheelRef.current = now;
-    if (e.deltaY > 0) next();
-    else if (e.deltaY < 0) prev();
+    if (now - lastWheel.current < 500) return;
+    lastWheel.current = now;
+    if (e.deltaY > 0) next(); else prev();
   };
+
+  const roles = useMemo(
+    () =>
+      SLIDES.map((_, k) => {
+        const d = (k - i + n) % n;
+        if (d === 0) return "center";
+        if (d === 1) return "right";
+        if (d === n - 1) return "left";
+        return "hidden";
+      }),
+    [i, n]
+  );
 
   return (
     <div className="container mx-auto max-w-6xl px-4 py-10 space-y-10">
@@ -81,24 +68,13 @@ export default function AboutPage() {
 
       <div
         className="relative h-[420px] w-full overflow-hidden rounded-3xl border border-white/10 ring-1 ring-white/10"
-        onMouseEnter={() => {
-          hoverRef.current = true;
-          if (timerRef.current) clearInterval(timerRef.current);
-        }}
-        onMouseLeave={() => {
-          hoverRef.current = false;
-          if (timerRef.current) clearInterval(timerRef.current);
-          timerRef.current = setInterval(() => setI((x) => (x + 1) % n), 5000);
-        }}
+        onMouseEnter={() => { hovering.current = true; if (timerRef.current) clearInterval(timerRef.current); }}
+        onMouseLeave={() => { hovering.current = false; timerRef.current = setInterval(() => setI((x) => (x + 1) % n), 5000); }}
         onWheel={onWheel}
       >
         {SLIDES.map((s, k) => {
           const role = roles[k];
-
-          const base =
-            "absolute top-1/2 -translate-y-1/2 aspect-[16/9] w-[32%] rounded-3xl overflow-hidden ring-1 ring-white/10 shadow-xl transition-all duration-500 will-change-transform";
-
-          let leftPct = "50%";
+          let left = "50%";
           let scale = "scale-100";
           let blur = "blur-0";
           let opacity = "opacity-100";
@@ -106,51 +82,25 @@ export default function AboutPage() {
           let pointer = "pointer-events-auto";
 
           if (role === "left") {
-            leftPct = "16.66%";
-            scale = "scale-[0.93]";
-            blur = "blur-[1.2px]";
-            opacity = "opacity-85";
-            z = "z-10";
-            pointer = "cursor-pointer";
+            left = "16.66%"; scale = "scale-[0.93]"; blur = "blur-[1.2px]"; opacity = "opacity-85"; z = "z-10"; pointer = "cursor-pointer";
           } else if (role === "right") {
-            leftPct = "83.33%";
-            scale = "scale-[0.93]";
-            blur = "blur-[1.2px]";
-            opacity = "opacity-85";
-            z = "z-10";
-            pointer = "cursor-pointer";
+            left = "83.33%"; scale = "scale-[0.93]"; blur = "blur-[1.2px]"; opacity = "opacity-85"; z = "z-10"; pointer = "cursor-pointer";
           } else if (role === "hidden") {
-            leftPct = "120%";
-            scale = "scale-[0.9]";
-            blur = "blur-sm";
-            opacity = "opacity-0";
-            z = "z-0";
-            pointer = "pointer-events-none";
+            left = "120%"; scale = "scale-[0.9]"; blur = "blur-sm"; opacity = "opacity-0"; z = "z-0"; pointer = "pointer-events-none";
           }
 
-          const handleClick = () => {
-            if (role === "left") prev();
-            if (role === "right") next();
-          };
+          const click = () => { if (role === "left") prev(); if (role === "right") next(); };
 
           return (
             <figure
               key={k}
-              onClick={handleClick}
-              className={`${base} ${scale} ${opacity} ${z} ${pointer}`}
-              style={{ left: leftPct, transform: "translate(-50%, -50%)" }}
+              onClick={click}
+              className={`absolute top-1/2 -translate-y-1/2 aspect-[16/9] w-[32%] rounded-3xl overflow-hidden ring-1 ring-white/10 shadow-xl transition-all duration-500 will-change-transform ${scale} ${opacity} ${z} ${pointer}`}
+              style={{ left, transform: `translate(-50%, -50%)` }}
             >
               <div className={`relative h-full w-full ${blur}`}>
-                <Image
-                  src={s.img}
-                  alt={s.title}
-                  fill
-                  className="object-cover"
-                  priority={k === 0}
-                  sizes="(max-width: 768px) 90vw, (max-width: 1200px) 60vw, 50vw"
-                />
+                <Image src={s.img} alt={s.title} fill className="object-cover" priority={k === 0} />
               </div>
-
               <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/55 to-transparent p-4">
                 <div className="flex items-center gap-2 text-sm md:text-base">
                   <span>{s.emoji}</span>
@@ -162,44 +112,33 @@ export default function AboutPage() {
           );
         })}
 
+        {/* prev/next */}
         <button
           aria-label="Previous"
           onClick={prev}
           className="group absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 ring-1 ring-white/20 backdrop-blur hover:bg-white/20"
         >
-          <svg
-            className="h-6 w-6 text-white transition group-hover:scale-105"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
+          <svg className="h-6 w-6 text-white transition group-hover:scale-105" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-
         <button
           aria-label="Next"
           onClick={next}
           className="group absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 ring-1 ring-white/20 backdrop-blur hover:bg-white/20"
         >
-          <svg
-            className="h-6 w-6 text-white transition group-hover:scale-105"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
+          <svg className="h-6 w-6 text-white transition group-hover:scale-105" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
       </div>
 
+      {/* Mission */}
       <div className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10 text-center">
         <h3 className="text-xl font-semibold mb-2">Our Mission</h3>
         <p className="text-white/70 max-w-3xl mx-auto">
-          Our goal is to empower students with smart learning tools, real-time help and a
-          supportive community — connecting education with innovation under one platform.
+          Our goal is to empower students with smart learning tools, real-time help and a supportive community —
+          connecting education with innovation under one platform.
         </p>
       </div>
     </div>
