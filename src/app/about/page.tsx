@@ -7,13 +7,13 @@ const slides = [
   { 
     emoji: "🤖", 
     date: "2024 · Dec", 
-    title: "UniHero Bot created", 
+    title: "UniHero Bot Created", 
     img: "/images/1-unihero-bot-created.png" 
   },
   { 
     emoji: "🧑‍🤝‍🧑", 
     date: "2024 · Oct", 
-    title: "2 anonym founders", 
+    title: "2 Anonym Founders", 
     img: "/images/2-anonym-founders.png" 
   },
   { 
@@ -25,7 +25,7 @@ const slides = [
   { 
     emoji: "🎉", 
     date: "2025 · May", 
-    title: "180+ students success", 
+    title: "180+ Students success", 
     img: "/images/4-students-success.png" 
   },
   { 
