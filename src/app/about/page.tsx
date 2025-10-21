@@ -22,30 +22,20 @@ export default function AboutPage() {
   const prev = useCallback(() => setI((x) => (x - 1 + n) % n), [n]);
   const next = useCallback(() => setI((x) => (x + 1) % n), [n]);
 
-  // autoplay 5s, pause on hover
+  // autoplay 5s (pause on hover)
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const hoverRef = useRef(false);
 
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const lastScrollRef = useRef(0);
-  const WHEEL_COOLDOWN = 500;
-
   useEffect(() => {
     if (hoverRef.current) return;
-
     if (timerRef.current) clearInterval(timerRef.current);
-    // ✅ Correct setInterval + no stray 5000 passed to setI
-    timerRef.current = setInterval(() => {
-      setI((x) => (x + 1) % n);
-    }, 5000);
-
-    // ✅ Cleanup always returns void
+    timerRef.current = setInterval(() => setI((x) => (x + 1) % n), 5000);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [i, n]);
 
-  // role: left / center / right / hidden
+  // 3 ta ko‘rinadigan karta: left / center / right / others(hidden)
   const roles = useMemo(
     () =>
       SLIDES.map((_, k) => {
@@ -58,15 +48,18 @@ export default function AboutPage() {
     [i, n]
   );
 
-  // Keyboard: ArrowLeft / ArrowRight + Home/End
+  // klaviatura + sichqoncha g‘ildiragi
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const lastScrollRef = useRef(0);
+  const WHEEL_COOLDOWN = 500;
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (!containerRef.current) return;
-      const isFocusedWithin =
+      const inside =
         containerRef.current.contains(document.activeElement) ||
         document.activeElement === containerRef.current;
-
-      if (!isFocusedWithin) return;
+      if (!inside) return;
 
       if (e.key === "ArrowLeft") {
         e.preventDefault();
@@ -86,7 +79,6 @@ export default function AboutPage() {
     return () => window.removeEventListener("keydown", onKey);
   }, [next, prev, n]);
 
-  // Wheel / touchpad
   const onWheel: React.WheelEventHandler<HTMLDivElement> = (e) => {
     const now = Date.now();
     if (now - lastScrollRef.current < WHEEL_COOLDOWN) return;
@@ -120,39 +112,44 @@ export default function AboutPage() {
         }}
         onMouseLeave={() => {
           hoverRef.current = false;
-          timerRef.current = setInterval(() => {
-            setI((x) => (x + 1) % n);
-          }, 5000);
+          timerRef.current = setInterval(() => setI((x) => (x + 1) % n), 5000);
         }}
       >
         {SLIDES.map((s, k) => {
           const role = roles[k];
-          const base =
-            "absolute top-1/2 -translate-y-1/2 aspect-[16/9] w-[32%] rounded-3xl overflow-hidden ring-1 ring-white/10 shadow-xl transition-all duration-500 will-change-transform";
 
+          // umumiy baza
+          const base =
+            "absolute top-1/2 -translate-y-1/2 aspect-[16/9] rounded-3xl overflow-hidden ring-1 ring-white/10 shadow-xl transition-all duration-500 ease-out will-change-transform";
+
+          // pozitsiya/ko‘rinish parametrlar
           let leftPct = "50%";
-          let scale = "scale-100";
+          let widthClass = "w-[50%] md:w-[50%]";    // center keng
+          let scale = "scale-[1.02]";               // center yoyilib turadi
           let blur = "blur-0";
           let opacity = "opacity-100";
-          let z = "z-20";
+          let z = "z-30";
           let pointer = "pointer-events-auto";
 
           if (role === "left") {
-            leftPct = "16.66%";
-            scale = "scale-[0.93]";
-            blur = "blur-[1.2px]";
+            leftPct = "20%";
+            widthClass = "w-[28%] md:w-[28%]";
+            scale = "scale-[0.94]";
+            blur = "blur-[1px]";
             opacity = "opacity-85";
             z = "z-10";
             pointer = "cursor-pointer";
           } else if (role === "right") {
-            leftPct = "83.33%";
-            scale = "scale-[0.93]";
-            blur = "blur-[1.2px]";
+            leftPct = "80%";
+            widthClass = "w-[28%] md:w-[28%]";
+            scale = "scale-[0.94]";
+            blur = "blur-[1px]";
             opacity = "opacity-85";
             z = "z-10";
             pointer = "cursor-pointer";
           } else if (role === "hidden") {
             leftPct = "120%";
+            widthClass = "w-[26%]";
             scale = "scale-[0.9]";
             blur = "blur-sm";
             opacity = "opacity-0";
@@ -169,7 +166,7 @@ export default function AboutPage() {
             <figure
               key={k}
               onClick={handleClick}
-              className={`${base} ${scale} ${opacity} ${z} ${pointer}`}
+              className={`${base} ${widthClass} ${scale} ${opacity} ${z} ${pointer}`}
               style={{ left: leftPct, transform: `translate(-50%, -50%)` }}
             >
               <div className={`relative h-full w-full ${blur}`}>
@@ -187,6 +184,7 @@ export default function AboutPage() {
           );
         })}
 
+        {/* Tugmalar */}
         <button
           aria-label="Previous"
           onClick={prev}
