@@ -1,6 +1,7 @@
 // src/app/resources/page.tsx
 import SectionHeader from "@/components/SectionHeader";
 import ResourcesGrid from "@/components/ResourcesGrid";
+import SocialBand from "@/components/SocialBand"; // ⬅️ qo'shdik
 
 export default function ResourcesPage() {
   return (
@@ -10,6 +11,9 @@ export default function ResourcesPage() {
         subtitle="Everything you need to study smarter"
       />
       <ResourcesGrid />
+
+      {/* Telegram band */}
+      <SocialBand />
     </div>
   );
 }
