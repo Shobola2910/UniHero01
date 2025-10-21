@@ -64,9 +64,16 @@ export default function ResourcesGrid() {
   );
 
   useEffect(() => {
-    const id = setInterval(rotate, 20000); // 20s da bir marta
-    return () => clearInterval(id);
-  }, [rotate]);
+  const t = setInterval(() => {
+    setCards((prev) => {
+      const copy = [...prev];
+      copy.unshift(copy.pop()!); // clockwise
+      return copy;
+    });
+  }, 20000);
+  return () => clearInterval(t);
+}, []);
+
 
   /* ---- Ko‘rinish tartibi (soat yo‘nalishi) ---- */
   const cards = useMemo<CardItem[]>(
