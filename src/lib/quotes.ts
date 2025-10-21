@@ -1,8 +1,12 @@
 // src/lib/quotes.ts
-export type Quote = { text: string; author: string; wiki?: string };
+export type Quote = {
+  text: string;
+  author: string;
+  /** optional wikipedia slug (e.g. "Abraham_Lincoln") */
+  wiki?: string;
+};
 
 export const QUOTES: Quote[] = [
-  // — English / global
   { text: "The future belongs to those who prepare for it today.", author: "Malcolm X", wiki: "Malcolm_X" },
   { text: "It always seems impossible until it’s done.", author: "Nelson Mandela", wiki: "Nelson_Mandela" },
   { text: "Focus is the art of knowing what to ignore.", author: "James Clear" }, // blog author — search
@@ -27,5 +31,13 @@ export const QUOTES: Quote[] = [
   { text: "A pen can carry the weight of a nation’s fate.", author: "Abdulla Qodiriy", wiki: "Abdulla_Qahhor" }, // example; edit if needed
   { text: "If the heart strives, horizons open.", author: "Erkin Vohidov" }, // search
   { text: "Sincerity makes even simple words eternal.", author: "Zulfiya", wiki: "Zulfiya" },
+  { text: "The future depends on what you do today.", author: "Mahatma Gandhi", wiki: "Mahatma_Gandhi" },
+  { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill", wiki: "Winston_Churchill" },
+  { text: "Education is the most powerful weapon which you can use to change the world.", author: "Nelson Mandela", wiki: "Nelson_Mandela" },
+  { text: "Sabr — ilmu kamolot kalitidir.", author: "Abu Ali ibn Sino", wiki: "Avicenna" },
+  { text: "Kimki ilm istasa, tunini kunduz qilur.", author: "Alisher Navoiy", wiki: "Ali-Shir_Nava'i" },
+  { text: "The only way to do great work is to love what you do.", author: "Steve Jobs", wiki: "Steve_Jobs" },
+  { text: "Difficulties strengthen the mind, as labor does the body.", author: "Seneca", wiki: "Seneca_the_Younger" },
+  // … shu formatda davom ettirishingiz mumkin (400+).
 ];
 
