@@ -26,6 +26,12 @@ export default function AboutPage() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const hoverRef = useRef(false);
 
+  // wheel throttle
+  const lastScrollRef = useRef(0);
+  const WHEEL_COOLDOWN = 500; // ms
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     if (hoverRef.current) return;
     timerRef.current && clearInterval(timerRef.current);
@@ -46,12 +52,65 @@ export default function AboutPage() {
     [i, n]
   );
 
+  // Keyboard: ArrowLeft / ArrowRight + Home/End
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (!containerRef.current) return;
+      // faqat carousel fokusda yoki ichida bo‘lsa
+      const isFocusedWithin =
+        containerRef.current.contains(document.activeElement) ||
+        document.activeElement === containerRef.current;
+
+      if (!isFocusedWithin) return;
+
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        prev();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        next();
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        setI(0);
+      } else if (e.key === "End") {
+        e.preventDefault();
+        setI(n - 1);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [next, prev, n]);
+
+  // Wheel / touchpad: chap/o‘ngga siljitish
+  const onWheel: React.WheelEventHandler<HTMLDivElement> = (e) => {
+    const now = Date.now();
+    if (now - lastScrollRef.current < WHEEL_COOLDOWN) return;
+
+    // Vertikal yoki gorizontal harakatni aniqlaymiz
+    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+
+    if (delta > 10) {
+      e.preventDefault();
+      next();
+      lastScrollRef.current = now;
+    } else if (delta < -10) {
+      e.preventDefault();
+      prev();
+      lastScrollRef.current = now;
+    }
+  };
+
   return (
     <div className="container mx-auto max-w-6xl px-4 py-10 space-y-10">
       <SectionHeader title="Our Story" subtitle="Milestones from idea to impact" />
 
       <div
-        className="relative h-[420px] w-full overflow-hidden rounded-3xl border border-white/10 ring-1 ring-white/10"
+        ref={containerRef}
+        role="region"
+        aria-label="UniHero timeline carousel"
+        tabIndex={0}
+        onWheel={onWheel}
+        className="relative h-[420px] w-full overflow-hidden rounded-3xl border border-white/10 ring-1 ring-white/10 outline-none focus:ring-2 focus:ring-sky-400/60"
         onMouseEnter={() => {
           hoverRef.current = true;
           if (timerRef.current) clearInterval(timerRef.current);
@@ -65,11 +124,9 @@ export default function AboutPage() {
         {SLIDES.map((s, k) => {
           const role = roles[k];
 
-          // umumiy stil
           const base =
             "absolute top-1/2 -translate-y-1/2 aspect-[16/9] w-[32%] rounded-3xl overflow-hidden ring-1 ring-white/10 shadow-xl transition-all duration-500 will-change-transform";
 
-          // pozitsiya (% markazlar)
           let leftPct = "50%";
           let scale = "scale-100";
           let blur = "blur-0";
@@ -116,7 +173,6 @@ export default function AboutPage() {
                 <Image src={s.img} alt={s.title} fill className="object-cover" priority={k === 0} />
               </div>
 
-              {/* caption */}
               <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/55 to-transparent p-4">
                 <div className="flex items-center gap-2 text-sm md:text-base">
                   <span>{s.emoji}</span>
@@ -163,7 +219,6 @@ export default function AboutPage() {
         </button>
       </div>
 
-      {/* Mission */}
       <div className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10 text-center">
         <h3 className="text-xl font-semibold mb-2">Our Mission</h3>
         <p className="text-white/70 max-w-3xl mx-auto">
