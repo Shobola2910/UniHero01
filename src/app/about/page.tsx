@@ -26,17 +26,23 @@ export default function AboutPage() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const hoverRef = useRef(false);
 
-  // wheel throttle
-  const lastScrollRef = useRef(0);
-  const WHEEL_COOLDOWN = 500; // ms
-
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const lastScrollRef = useRef(0);
+  const WHEEL_COOLDOWN = 500;
 
   useEffect(() => {
     if (hoverRef.current) return;
-    timerRef.current && clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => setI((x) => (x + 1) % n, 5000), 5000);
-    return () => timerRef.current && clearInterval(timerRef.current);
+
+    if (timerRef.current) clearInterval(timerRef.current);
+    // ✅ Correct setInterval + no stray 5000 passed to setI
+    timerRef.current = setInterval(() => {
+      setI((x) => (x + 1) % n);
+    }, 5000);
+
+    // ✅ Cleanup always returns void
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
   }, [i, n]);
 
   // role: left / center / right / hidden
@@ -56,7 +62,6 @@ export default function AboutPage() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (!containerRef.current) return;
-      // faqat carousel fokusda yoki ichida bo‘lsa
       const isFocusedWithin =
         containerRef.current.contains(document.activeElement) ||
         document.activeElement === containerRef.current;
@@ -81,14 +86,12 @@ export default function AboutPage() {
     return () => window.removeEventListener("keydown", onKey);
   }, [next, prev, n]);
 
-  // Wheel / touchpad: chap/o‘ngga siljitish
+  // Wheel / touchpad
   const onWheel: React.WheelEventHandler<HTMLDivElement> = (e) => {
     const now = Date.now();
     if (now - lastScrollRef.current < WHEEL_COOLDOWN) return;
 
-    // Vertikal yoki gorizontal harakatni aniqlaymiz
     const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-
     if (delta > 10) {
       e.preventDefault();
       next();
@@ -117,13 +120,13 @@ export default function AboutPage() {
         }}
         onMouseLeave={() => {
           hoverRef.current = false;
-          timerRef.current = setInterval(() => setI((x) => (x + 1) % n), 5000);
+          timerRef.current = setInterval(() => {
+            setI((x) => (x + 1) % n);
+          }, 5000);
         }}
       >
-        {/* 3 ta karta yonma-yon: left(16.6%), center(50%), right(83.3%) */}
         {SLIDES.map((s, k) => {
           const role = roles[k];
-
           const base =
             "absolute top-1/2 -translate-y-1/2 aspect-[16/9] w-[32%] rounded-3xl overflow-hidden ring-1 ring-white/10 shadow-xl transition-all duration-500 will-change-transform";
 
@@ -184,36 +187,22 @@ export default function AboutPage() {
           );
         })}
 
-        {/* chap/orqa tugma */}
         <button
           aria-label="Previous"
           onClick={prev}
           className="group absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 ring-1 ring-white/20 backdrop-blur hover:bg-white/20"
         >
-          <svg
-            className="h-6 w-6 text-white transition group-hover:scale-105"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
+          <svg className="h-6 w-6 text-white transition group-hover:scale-105" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
 
-        {/* o‘ng/oldinga tugma */}
         <button
           aria-label="Next"
           onClick={next}
           className="group absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 ring-1 ring-white/20 backdrop-blur hover:bg-white/20"
         >
-          <svg
-            className="h-6 w-6 text-white transition group-hover:scale-105"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
+          <svg className="h-6 w-6 text-white transition group-hover:scale-105" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
