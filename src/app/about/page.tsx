@@ -19,8 +19,13 @@ export default function AboutPage() {
   const [i, setI] = useState(0);
   const n = SLIDES.length;
 
-  const prev = useCallback(() => setI((x) => (x - 1 + n) % n), [n]);
-  const next = useCallback(() => setI((x) => (x + 1) % n), [n]);
+  const prev = useCallback(() => {
+    setI((x) => (x - 1 + n) % n);
+  }, [n]);
+
+  const next = useCallback(() => {
+    setI((x) => (x + 1) % n);
+  }, [n]);
 
   // autoplay 5s — pause on hover
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -38,24 +43,22 @@ export default function AboutPage() {
   }, [i, n]);
 
   // roles for positions: center / right / left / hidden
-  const roles = useMemo(
-    () =>
-      SLIDES.map((_, k) => {
-        const d = (k - i + n) % n;
-        if (d === 0) return "center";
-        if (d === 1) return "right";
-        if (d === n - 1) return "left";
-        return "hidden";
-      }),
-    [i, n]
-  );
+  const roles = useMemo(() => {
+    return SLIDES.map((_, k) => {
+      const d = (k - i + n) % n;
+      if (d === 0) return "center";
+      if (d === 1) return "right";
+      if (d === n - 1) return "left";
+      return "hidden";
+    });
+  }, [i, n]);
 
   // keyboard navigation (← / →)
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
+    function onKey(e: KeyboardEvent) {
       if (e.key === "ArrowLeft") prev();
       if (e.key === "ArrowRight") next();
-    };
+    }
     window.addEventListener("keydown", onKey);
     return () => {
       window.removeEventListener("keydown", onKey);
@@ -66,7 +69,7 @@ export default function AboutPage() {
   const lastWheelRef = useRef(0);
   const onWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     const now = Date.now();
-    if (now - lastWheelRef.current < 400) return; // throttle 400ms
+    if (now - lastWheelRef.current < 400) return;
     lastWheelRef.current = now;
     if (e.deltaY > 0) next();
     else if (e.deltaY < 0) prev();
@@ -89,7 +92,6 @@ export default function AboutPage() {
         }}
         onWheel={onWheel}
       >
-        {/* 3 cards visible: left (16.6%), center (50%), right (83.3%) */}
         {SLIDES.map((s, k) => {
           const role = roles[k];
 
@@ -136,7 +138,7 @@ export default function AboutPage() {
               key={k}
               onClick={handleClick}
               className={`${base} ${scale} ${opacity} ${z} ${pointer}`}
-              style={{ left: leftPct, transform: `translate(-50%, -50%)` }}
+              style={{ left: leftPct, transform: "translate(-50%, -50%)" }}
             >
               <div className={`relative h-full w-full ${blur}`}>
                 <Image
@@ -160,7 +162,6 @@ export default function AboutPage() {
           );
         })}
 
-        {/* prev / next buttons */}
         <button
           aria-label="Previous"
           onClick={prev}
