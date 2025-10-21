@@ -4,7 +4,7 @@ import TimelineAuto from "@/components/TimelineAuto";
 
 export default function AboutPage() {
   return (
-    <div className="container mx-auto max-w-6xl px-4 py-10 space-y-10">
+    <div className="container mx-auto max-w-5xl px-4 py-10 space-y-10">
       <SectionHeader
         title="Our Story"
         subtitle="Milestones from idea to impact"
