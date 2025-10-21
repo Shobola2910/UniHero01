@@ -1,41 +1,40 @@
-import "./globals.css";
+// app/layout.tsx
 import type { Metadata } from "next";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import Script from "next/script";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://unihero.uz"),
-  alternates: { canonical: "/" },
   title: "UniHero — For Students, By Students",
-  description: "Student community with exam prep, resources and motivation.",
+  description:
+    "Practical resources, a helpful community, and simple tools. Learn smarter with study guides, templates and quick support.",
+  icons: {
+    icon: "/icon.png",              // app/icon.png
+    apple: "/apple-icon.png",       // app/apple-icon.png
+    shortcut: "/icon.png",
+  },
   openGraph: {
     title: "UniHero — For Students, By Students",
-    description: "Community, resources, exam prep, and daily motivation for students.",
-    images: ["/og-image.png"],
-    url: "https://unihero.uz",
+    description:
+      "Practical resources, a helpful community, and simple tools. Learn smarter with study guides, templates and quick support.",
+    url: "https://your-domain.tld/",
     siteName: "UniHero",
+    images: [{ url: "/opengraph-image.png", width: 1200, height: 630 }],
+    type: "website",
   },
-  icons: { icon: "/icon.png" }
+  twitter: {
+    card: "summary_large_image",
+    site: "@UniHero",
+    creator: "@UniHero",
+    title: "UniHero — For Students, By Students",
+    description:
+      "Practical resources, a helpful community, and simple tools.",
+    images: ["/twitter-image.png"],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-dvh antialiased selection:bg-unihero-accent/30">
-        <Navbar />
-        <main className="mx-auto max-w-6xl px-4 pt-28 pb-24 relative">{children}</main>
-        <Footer />
-        <Script id="ld-org" type="application/ld+json"
-          dangerouslySetInnerHTML={{__html: JSON.stringify({
-            "@context":"https://schema.org",
-            "@type":"Organization",
-            name:"UniHero",
-            url:"https://unihero.uz",
-            logo:"https://unihero.uz/icon.png",
-            sameAs:["https://t.me/UniHero_news","https://t.me/Unihero_admin"]
-          })}}/>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
