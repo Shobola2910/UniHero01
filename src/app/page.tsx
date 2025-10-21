@@ -1,7 +1,9 @@
 // src/app/page.tsx
 import Link from "next/link";
 import SectionHeader from "@/components/SectionHeader";
-import HeroSocialPills from "@/components/HeroSocialPills";
+// ❌ HeroSocialPills olib tashlandi
+
+import type { ReactNode } from "react";
 
 export default function HomePage() {
   return (
@@ -31,7 +33,7 @@ export default function HomePage() {
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
-              <CTA href="#community" variant="primary">
+              <CTA href="/#why" variant="primary">
                 Join the Community
               </CTA>
               <CTA href="/about" variant="ghost">
@@ -42,13 +44,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* SOCIAL PILLS */}
-      <section id="community" className="container mx-auto max-w-6xl px-4 pb-4">
-        <HeroSocialPills />
-      </section>
-
       {/* WHY STUDENTS LOVE UNI HERO */}
-      <section className="container mx-auto max-w-6xl px-4 py-10">
+      <section id="why" className="container mx-auto max-w-6xl px-4 py-10">
         <SectionHeader
           title="Why students love UniHero"
           subtitle="Built around clarity, speed and a friendly vibe"
@@ -65,8 +62,13 @@ export default function HomePage() {
         <div className="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
           <div className="grid gap-4 text-center sm:grid-cols-2 lg:grid-cols-4">
             {STATS.map((s) => (
-              <div key={s.label} className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-                <div className="text-2xl font-extrabold text-white">{s.value}</div>
+              <div
+                key={s.label}
+                className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10"
+              >
+                <div className="text-2xl font-extrabold text-white">
+                  {s.value}
+                </div>
                 <div className="mt-1 text-sm text-white/70">{s.label}</div>
               </div>
             ))}
@@ -82,16 +84,26 @@ export default function HomePage() {
         <div className="rounded-3xl bg-gradient-to-br from-[#0f2250] to-[#1b2f66] p-6 md:p-8 ring-1 ring-white/10 shadow-[0_18px_45px_rgba(0,0,0,.35)]">
           <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
             <div>
-              <h3 className="text-xl font-bold md:text-2xl">Ready to get started?</h3>
+              <h3 className="text-xl font-bold md:text-2xl">
+                Ready to get started?
+              </h3>
               <p className="text-white/80">
                 Ping us on Telegram and we’ll point you to the right materials.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <CTA href="https://t.me/UniHero_BOT" target="_blank" variant="primary">
+              <CTA
+                href="https://t.me/UniHero_BOT"
+                target="_blank"
+                variant="primary"
+              >
                 Chat with Bot 🤖
               </CTA>
-              <CTA href="https://t.me/UniHero_admin" target="_blank" variant="ghost">
+              <CTA
+                href="https://t.me/UniHero_admin"
+                target="_blank"
+                variant="ghost"
+              >
                 Talk to Admin 👤
               </CTA>
             </div>
@@ -111,7 +123,7 @@ function CTA({
   target,
 }: {
   href: string;
-  children: React.ReactNode;
+  children: ReactNode;
   variant?: "primary" | "ghost";
   target?: "_blank";
 }) {
@@ -129,6 +141,7 @@ function CTA({
 }
 
 type Feature = { icon: string; title: string; desc: string };
+
 const FEATURES: Feature[] = [
   {
     icon: "📘",
