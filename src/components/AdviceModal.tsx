@@ -6,46 +6,40 @@ import { useEffect } from "react";
 export default function AdviceModal({
   open,
   title,
-  children,
   onClose,
+  children,
 }: {
   open: boolean;
   title: string;
-  children: React.ReactNode;
   onClose: () => void;
+  children: React.ReactNode;
 }) {
-  // Close on Esc
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    const esc = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", esc);
+    return () => window.removeEventListener("keydown", esc);
   }, [open, onClose]);
 
   if (!open) return null;
 
   return (
     <div
-      aria-modal
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      aria-modal="true"
       role="dialog"
-      className="fixed inset-0 z-[200] flex items-center justify-center px-4"
     >
-      {/* Backdrop (click to close) */}
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      {/* overlay (click to close) */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Card */}
-      <div className="relative z-[210] w-full max-w-3xl rounded-2xl bg-[#0f1e3d]/95 p-5 ring-1 ring-white/15 shadow-2xl">
+      {/* panel */}
+      <div className="relative z-10 w-[min(92vw,720px)] rounded-2xl bg-[#0d1f45] p-5 ring-1 ring-white/15">
         <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-lg md:text-xl font-semibold">{title}</h3>
+          <h3 className="text-lg font-semibold">{title}</h3>
           <button
-            aria-label="Close"
             onClick={onClose}
-            className="rounded-lg p-2 text-white/70 hover:bg-white/10 hover:text-white"
+            className="rounded-full bg-white/10 p-1.5 ring-1 ring-white/20 hover:bg-white/20"
+            aria-label="Close"
           >
             ✕
           </button>
