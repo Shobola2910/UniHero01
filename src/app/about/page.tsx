@@ -4,7 +4,7 @@ import TimelineAuto from "@/components/TimelineAuto";
 
 export default function AboutPage() {
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-10 space-y-10">
+    <div className="container mx-auto max-w-6xl px-4 py-10 space-y-10">
       <SectionHeader
         title="Our Story"
         subtitle="Milestones from idea to impact"
@@ -16,9 +16,8 @@ export default function AboutPage() {
         milestones — continuously updated as we scale.
       </p>
 
-      {/* ⭐ Auto-sliding timeline */}
-      {/* Agar TimelineAuto da hint ko‘rsatmaslik opsiyasi bo‘lsa: showHint={false} */}
-      <TimelineAuto />
+      {/* Auto-sliding timeline: o‘ngdan chapga, biroz sekinroq */}
+      <TimelineAuto direction="rtl" durationSec={28} />
 
       <div className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">
         <h3 className="text-xl font-semibold mb-2">What&apos;s next?</h3>
@@ -26,7 +25,7 @@ export default function AboutPage() {
           We are expanding resources, events and lightweight tools to help
           students learn faster. If you want to collaborate or contribute,
           reach us via{" "}
-          <a className="underline" href="https://t.me/UniHero_admin">
+          <a className="underline" href="https://t.me/UniHero_admin" target="_blank">
             Telegram
           </a>
           .
