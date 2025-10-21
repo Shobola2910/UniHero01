@@ -22,20 +22,22 @@ export default function AboutPage() {
   const prev = useCallback(() => setI((x) => (x - 1 + n) % n), [n]);
   const next = useCallback(() => setI((x) => (x + 1) % n), [n]);
 
-  // autoplay 5s (pause on hover)
+  // autoplay 5s — pause on hover
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const hoverRef = useRef(false);
 
   useEffect(() => {
     if (hoverRef.current) return;
     if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => setI((x) => (x + 1) % n), 5000);
+    timerRef.current = setInterval(() => {
+      setI((x) => (x + 1) % n);
+    }, 5000);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [i, n]);
 
-  // 3 ta ko‘rinadigan karta: left / center / right / others(hidden)
+  // roles for positions: center / right / left / hidden
   const roles = useMemo(
     () =>
       SLIDES.map((_, k) => {
@@ -48,60 +50,26 @@ export default function AboutPage() {
     [i, n]
   );
 
-  // klaviatura + sichqoncha g‘ildiragi
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const lastScrollRef = useRef(0);
-  const WHEEL_COOLDOWN = 500;
-
-  // src/app/about/page.tsx (inside your useEffect)
-useEffect(() => {
-  if (hoverRef.current) return;
-  if (timerRef.current) clearInterval(timerRef.current);
-  timerRef.current = setInterval(() => setI((x) => (x + 1) % n), 5000);
-  return () => {
-    if (timerRef.current) clearInterval(timerRef.current);
-  };
-}, [i, n]);
-
+  // keyboard navigation (← / →)
+  useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (!containerRef.current) return;
-      const inside =
-        containerRef.current.contains(document.activeElement) ||
-        document.activeElement === containerRef.current;
-      if (!inside) return;
-
-      if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        prev();
-      } else if (e.key === "ArrowRight") {
-        e.preventDefault();
-        next();
-      } else if (e.key === "Home") {
-        e.preventDefault();
-        setI(0);
-      } else if (e.key === "End") {
-        e.preventDefault();
-        setI(n - 1);
-      }
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [next, prev, n]);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [next, prev]);
 
-  const onWheel: React.WheelEventHandler<HTMLDivElement> = (e) => {
+  // mouse wheel navigation (throttled)
+  const lastWheelRef = useRef(0);
+  const onWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     const now = Date.now();
-    if (now - lastScrollRef.current < WHEEL_COOLDOWN) return;
-
-    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-    if (delta > 10) {
-      e.preventDefault();
-      next();
-      lastScrollRef.current = now;
-    } else if (delta < -10) {
-      e.preventDefault();
-      prev();
-      lastScrollRef.current = now;
-    }
+    if (now - lastWheelRef.current < 400) return; // throttle 400ms
+    lastWheelRef.current = now;
+    if (e.deltaY > 0) next();
+    else if (e.deltaY < 0) prev();
   };
 
   return (
@@ -109,56 +77,48 @@ useEffect(() => {
       <SectionHeader title="Our Story" subtitle="Milestones from idea to impact" />
 
       <div
-        ref={containerRef}
-        role="region"
-        aria-label="UniHero timeline carousel"
-        tabIndex={0}
-        onWheel={onWheel}
-        className="relative h-[420px] w-full overflow-hidden rounded-3xl border border-white/10 ring-1 ring-white/10 outline-none focus:ring-2 focus:ring-sky-400/60"
+        className="relative h-[420px] w-full overflow-hidden rounded-3xl border border-white/10 ring-1 ring-white/10"
         onMouseEnter={() => {
           hoverRef.current = true;
           if (timerRef.current) clearInterval(timerRef.current);
         }}
         onMouseLeave={() => {
           hoverRef.current = false;
+          if (timerRef.current) clearInterval(timerRef.current);
           timerRef.current = setInterval(() => setI((x) => (x + 1) % n), 5000);
         }}
+        onWheel={onWheel}
       >
+        {/* 3 cards visible: left (16.6%), center (50%), right (83.3%) */}
         {SLIDES.map((s, k) => {
           const role = roles[k];
 
-          // umumiy baza
           const base =
-            "absolute top-1/2 -translate-y-1/2 aspect-[16/9] rounded-3xl overflow-hidden ring-1 ring-white/10 shadow-xl transition-all duration-500 ease-out will-change-transform";
+            "absolute top-1/2 -translate-y-1/2 aspect-[16/9] w-[32%] rounded-3xl overflow-hidden ring-1 ring-white/10 shadow-xl transition-all duration-500 will-change-transform";
 
-          // pozitsiya/ko‘rinish parametrlar
           let leftPct = "50%";
-          let widthClass = "w-[50%] md:w-[50%]";    // center keng
-          let scale = "scale-[1.02]";               // center yoyilib turadi
+          let scale = "scale-100";
           let blur = "blur-0";
           let opacity = "opacity-100";
-          let z = "z-30";
+          let z = "z-20";
           let pointer = "pointer-events-auto";
 
           if (role === "left") {
-            leftPct = "20%";
-            widthClass = "w-[28%] md:w-[28%]";
-            scale = "scale-[0.94]";
-            blur = "blur-[1px]";
+            leftPct = "16.66%";
+            scale = "scale-[0.93]";
+            blur = "blur-[1.2px]";
             opacity = "opacity-85";
             z = "z-10";
             pointer = "cursor-pointer";
           } else if (role === "right") {
-            leftPct = "80%";
-            widthClass = "w-[28%] md:w-[28%]";
-            scale = "scale-[0.94]";
-            blur = "blur-[1px]";
+            leftPct = "83.33%";
+            scale = "scale-[0.93]";
+            blur = "blur-[1.2px]";
             opacity = "opacity-85";
             z = "z-10";
             pointer = "cursor-pointer";
           } else if (role === "hidden") {
             leftPct = "120%";
-            widthClass = "w-[26%]";
             scale = "scale-[0.9]";
             blur = "blur-sm";
             opacity = "opacity-0";
@@ -175,11 +135,18 @@ useEffect(() => {
             <figure
               key={k}
               onClick={handleClick}
-              className={`${base} ${widthClass} ${scale} ${opacity} ${z} ${pointer}`}
+              className={`${base} ${scale} ${opacity} ${z} ${pointer}`}
               style={{ left: leftPct, transform: `translate(-50%, -50%)` }}
             >
               <div className={`relative h-full w-full ${blur}`}>
-                <Image src={s.img} alt={s.title} fill className="object-cover" priority={k === 0} />
+                <Image
+                  src={s.img}
+                  alt={s.title}
+                  fill
+                  className="object-cover"
+                  priority={k === 0}
+                  sizes="(max-width: 768px) 90vw, (max-width: 1200px) 60vw, 50vw"
+                />
               </div>
 
               <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/55 to-transparent p-4">
@@ -193,13 +160,19 @@ useEffect(() => {
           );
         })}
 
-        {/* Tugmalar */}
+        {/* prev / next buttons */}
         <button
           aria-label="Previous"
           onClick={prev}
           className="group absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 ring-1 ring-white/20 backdrop-blur hover:bg-white/20"
         >
-          <svg className="h-6 w-6 text-white transition group-hover:scale-105" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            className="h-6 w-6 text-white transition group-hover:scale-105"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
@@ -209,7 +182,13 @@ useEffect(() => {
           onClick={next}
           className="group absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 ring-1 ring-white/20 backdrop-blur hover:bg-white/20"
         >
-          <svg className="h-6 w-6 text-white transition group-hover:scale-105" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            className="h-6 w-6 text-white transition group-hover:scale-105"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
@@ -218,8 +197,8 @@ useEffect(() => {
       <div className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10 text-center">
         <h3 className="text-xl font-semibold mb-2">Our Mission</h3>
         <p className="text-white/70 max-w-3xl mx-auto">
-          Our goal is to empower students with smart learning tools, real-time help and a supportive community — connecting
-          education with innovation under one platform.
+          Our goal is to empower students with smart learning tools, real-time help and a
+          supportive community — connecting education with innovation under one platform.
         </p>
       </div>
     </div>
