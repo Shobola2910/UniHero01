@@ -1,307 +1,234 @@
 // src/components/ResourcesGrid.tsx
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
-import AdviceModal from "@/components/AdviceModal";
-import { QUOTES } from "@/lib/quotes";
+import Link from "next/link";
+import Image from "next/image";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-/* ---------- Modal holati tipi ---------- */
-type ModalState = {
+/* ------------------------------------------------------------------ */
+/* A tiny local modal that closes on backdrop click or ESC             */
+/* ------------------------------------------------------------------ */
+function Modal({
+  open,
+  title,
+  onClose,
+  children,
+}: {
   open: boolean;
   title: string;
-  content: React.ReactNode | null;
-};
-
-type CardItem = {
-  key: "assign" | "exam" | "time" | "motive";
-  title: string;
-  desc: string;
-  icon: string;
-};
-
-/* ---------- Rotatsiya qilinadigan to‘rt karta ---------- */
-const BASE_CARDS: CardItem[] = [
-  {
-    key: "assign",
-    title: "Assignments",
-    desc: "Guides and templates for every subject.",
-    icon: "📄",
-  },
-  {
-    key: "exam",
-    title: "Exam Prep",
-    desc: "Summaries, formula sheets, and past papers.",
-    icon: "🧮",
-  },
-  {
-    key: "time",
-    title: "Time Management",
-    desc: "Planners, checklists, and focus methods.",
-    icon: "🕒",
-  },
-  {
-    key: "motive",
-    title: "Motivation",
-    desc: "Daily quotes and student success stories.",
-    icon: "💭",
-  },
-];
-
-/* ---------- Wiki havolasi ---------- */
-const wikiUrl = (name: string, slug?: string) =>
-  slug
-    ? `https://en.wikipedia.org/wiki/${encodeURIComponent(slug)}`
-    : `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(
-        name
-      )}&go=Go`;
-
-export default function ResourcesGrid() {
-  /* ---- Rotatsiya (har 20 soniyada) ---- */
-  const [orderStart, setOrderStart] = useState(0); // qaysi kartadan boshlash
-  const rotate = useCallback(
-    () => setOrderStart((s) => (s + 1) % BASE_CARDS.length),
-    []
-  );
-
+  onClose: () => void;
+  children: React.ReactNode;
+}) {
+  // Close on ESC
   useEffect(() => {
-  const t = setInterval(() => {
-    setCards((prev) => {
-      const copy = [...prev];
-      copy.unshift(copy.pop()!); // clockwise
-      return copy;
-    });
-  }, 20000);
-  return () => clearInterval(t);
-}, []);
-
-
-  /* ---- Ko‘rinish tartibi (soat yo‘nalishi) ---- */
-  const cards = useMemo<CardItem[]>(
-    () =>
-      Array.from({ length: BASE_CARDS.length }, (_, i) => {
-        const idx = (orderStart + i) % BASE_CARDS.length;
-        return BASE_CARDS[idx];
-      }),
-    [orderStart]
-  );
-
-  /* ---- Modal ---- */
-  const [modal, setModal] = useState<ModalState>({
-    open: false,
-    title: "",
-    content: null,
-  });
-  const close = useCallback(() => setModal((m) => ({ ...m, open: false })), []);
-
-  // Escape bilan yopish
-  useEffect(() => {
+    if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
+      if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [close]);
+  }, [open, onClose]);
 
-  // Unique quote (takrorlanmasiga harakat)
-  const nextUniqueQuote = useCallback(() => {
-    const key = "uh_seen_quotes";
-    const raw = typeof window !== "undefined" ? localStorage.getItem(key) : null;
-    const seen = new Set<number>(raw ? JSON.parse(raw) : []);
-    const pool = QUOTES.map((_, i) => i).filter((i) => !seen.has(i));
+  if (!open) return null;
+  return (
+    <div
+      aria-modal
+      role="dialog"
+      className="fixed inset-0 z-50 grid place-items-center bg-black/60 backdrop-blur-sm p-4"
+      onClick={onClose} // click on the backdrop closes
+    >
+      <div
+        className="relative w-full max-w-2xl rounded-2xl border border-white/15 bg-[#0c1c3d]/95 p-5 shadow-2xl ring-1 ring-white/10"
+        onClick={(e) => e.stopPropagation()} // prevent closing when clicking content
+      >
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white/90 ring-1 ring-white/20 transition hover:bg-white/20"
+        >
+          ✕
+        </button>
+        <h3 className="mb-3 text-lg font-semibold">{title}</h3>
+        <div className="prose prose-invert max-w-none">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
 
-    const idx =
-      pool.length === 0
-        ? Math.floor(Math.random() * QUOTES.length)
-        : pool[Math.floor(Math.random() * pool.length)];
+/* ------------------------------------------------------------------ */
 
-    if (pool.length > 0) {
-      seen.add(idx);
-      localStorage.setItem(key, JSON.stringify(Array.from(seen)));
-    }
-    return QUOTES[idx];
+type Card = {
+  key: string;
+  icon: string;
+  title: string;
+  desc: string;
+  onOpen: () => void;
+};
+
+export default function ResourcesGrid() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalBody, setModalBody] = useState<React.ReactNode>(null);
+
+  const openModal = useCallback((title: string, body: React.ReactNode) => {
+    setModalTitle(title);
+    setModalBody(body);
+    setModalOpen(true);
   }, []);
 
-  /* ---- Karta bosilgandagi maslahatlar ---- */
-  const onOpen = useCallback((k: CardItem["key"]) => {
-    if (k === "assign") {
-      setModal({
-        open: true,
-        title: "Assignments — Quick Help 📚",
-        content: (
-          <div className="space-y-3">
-            <p>
-              Having trouble with an assignment? You can{" "}
-              <a
-                href="https://t.me/UniHero_BOT"
-                target="_blank"
-                rel="noreferrer"
-                className="underline font-medium"
-              >
-                book help via our Telegram bot
-              </a>
-              . Send the <b>subject</b>, <b>deadline</b>, and a short
-              description — we’ll route it to the right person.
-            </p>
-            <ul className="list-disc pl-5 text-white/80">
-              <li>Attach files/screenshots if possible.</li>
-              <li>Be clear about constraints (format, word count, rubric).</li>
-              <li>Ask early — more time = better results.</li>
-            </ul>
-          </div>
-        ),
-      });
-    } else if (k === "exam") {
-      setModal({
-        open: true,
-        title: "Exam Prep — Verified Materials 🧠",
-        content: (
-          <div className="space-y-3">
-            <p>
-              For the <b>latest & trusted</b> materials, contact{" "}
-              <a
-                href="https://t.me/UniHero_admin"
-                target="_blank"
-                rel="noreferrer"
-                className="underline font-medium"
-              >
-                @UniHero_admin
-              </a>
-              . Share the <b>course</b> and <b>exam date</b>. We’ll send updated
-              summaries, formula sheets and past papers.
-            </p>
-            <p className="text-white/80">
-              Tip: also follow →{" "}
-              <a
-                href="https://t.me/UniHero_news"
-                target="_blank"
-                rel="noreferrer"
-                className="underline"
-              >
-                @UniHero_news
-              </a>
-              .
-            </p>
-          </div>
-        ),
-      });
-    } else if (k === "time") {
-      setModal({
-        open: true,
-        title: "Time Management — Focus & Pomodoro ⏱️",
-        content: (
-          <div className="space-y-3">
-            <ul className="list-disc pl-5">
-              <li>
-                <b>3 MITs:</b> pick your 3 Most Important Tasks for the day.
-              </li>
-              <li>
-                <b>Pomodoro 25/5:</b> 25 min deep focus + 5 min break. After 4
-                cycles → longer rest.
-              </li>
-              <li>Turn off notifications (DND) and study in blocks.</li>
-            </ul>
-            <p className="text-white/80">
-              Tools: any simple timer is enough. Consistency beats intensity.
-            </p>
-          </div>
-        ),
-      });
-    } else {
-      const q = nextUniqueQuote();
-      setModal({
-        open: true,
-        title: "Motivation — Today’s Quote 💡",
-        content: (
-          <blockquote className="rounded-xl bg-white/5 p-4 ring-1 ring-white/10">
-            <p className="text-[15px] leading-relaxed">“{q.text}”</p>
-            <footer className="mt-2 text-sm text-white/70">
-              —{" "}
-              <a
-                href={wikiUrl(q.author, q.wiki)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-white"
-                title={`Read about ${q.author} on Wikipedia`}
-              >
-                {q.author} ↗
-              </a>
-            </footer>
-          </blockquote>
-        ),
-      });
-    }
-  }, [nextUniqueQuote]);
+  const closeModal = useCallback(() => setModalOpen(false), []);
 
-  /* ---- Karta komponenti ---- */
-  const Card = ({
-    item,
-    onClick,
-  }: {
-    item: CardItem;
-    onClick: () => void;
-  }) => (
-    <button
-      onClick={onClick}
-      className="
-        group text-left w-full
-        rounded-2xl bg-white/[0.06] hover:bg-white/[0.08]
-        ring-1 ring-white/10 hover:ring-white/20
-        transition-all shadow-sm hover:shadow
-        px-5 py-4 md:px-6 md:py-5
-        "
-    >
-      <div className="flex items-center gap-2">
-        <span className="text-xl">{item.icon}</span>
-        <h3 className="font-semibold text-[16px] md:text-[17px]">
-          {item.title}
-        </h3>
-      </div>
-
-      {/* yozuv kesilmasin, balandlik bir xil tursin */}
-      <p
-        className="
-          mt-2 text-[13.5px] md:text-sm text-white/80
-          whitespace-normal break-words hyphens-auto leading-snug
-          min-h-[44px] md:min-h-[48px]
-        "
-      >
-        {item.desc}
-      </p>
-
-      {/* ichki kichik ramka effekt */}
-      <div className="pointer-events-none mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3">
-        <p className="text-xs text-white/60">
-          Click for tips & quick actions →
-        </p>
-      </div>
-    </button>
+  // Declare the 4 cards once, with handlers that open the modal
+  const initialCards: Card[] = useMemo(
+    () => [
+      {
+        key: "assignments",
+        icon: "📄",
+        title: "Assignments",
+        desc: "Guides and templates for every subject.",
+        onOpen: () =>
+          openModal(
+            "Assignments — Quick Help 📚",
+            <>
+              <p>
+                Stuck on an assignment? You can{" "}
+                <Link
+                  href="https://t.me/UniHero_BOT"
+                  target="_blank"
+                  className="underline font-medium"
+                >
+                  book help via our Telegram bot
+                </Link>
+                . Send the <b>subject</b>, <b>deadline</b> and a short description — we&apos;ll route it to the right person.
+              </p>
+              <ul>
+                <li>Attach files/screenshots if possible.</li>
+                <li>Be clear about constraints (format, word count, rubric).</li>
+                <li>Ask early — more time = better results.</li>
+              </ul>
+            </>
+          ),
+      },
+      {
+        key: "exam",
+        icon: "🧮",
+        title: "Exam Prep",
+        desc: "Summaries, formula sheets, and past papers.",
+        onOpen: () =>
+          openModal(
+            "Exam Prep — Verified Materials ✅",
+            <>
+              <p>
+                For the latest & trusted materials, contact{" "}
+                <Link
+                  href="https://t.me/UniHero_admin"
+                  target="_blank"
+                  className="underline font-medium"
+                >
+                  @UniHero_admin
+                </Link>
+                . Share your <b>course</b> and <b>exam date</b>. We’ll send updated summaries, formula sheets and past papers.
+              </p>
+              <p>
+                Tip: follow{" "}
+                <Link href="https://t.me/UniHero_news" target="_blank" className="underline">
+                  @UniHero_news
+                </Link>{" "}
+                for drops.
+              </p>
+            </>
+          ),
+      },
+      {
+        key: "time",
+        icon: "🕒",
+        title: "Time Management",
+        desc: "Planners, checklists, and focus methods.",
+        onOpen: () =>
+          openModal(
+            "Time Management — Focus & Pomodoro ⏱️",
+            <>
+              <ul>
+                <li>
+                  <b>3 MITs</b>: pick your 3 Most Important Tasks for the day.
+                </li>
+                <li>
+                  <b>Pomodoro 25/5</b>: 25 minutes deep focus + 5 minutes break. 4 cycles → longer break.
+                </li>
+                <li>Turn on DND; study in blocks by course/topic.</li>
+              </ul>
+            </>
+          ),
+      },
+      {
+        key: "motivation",
+        icon: "💭",
+        title: "Motivation",
+        desc: "Daily quotes and student success stories.",
+        onOpen: () =>
+          openModal(
+            "Motivation — Little Boost ✨",
+            <>
+              <p>
+                Keep going — consistent, small wins stack up faster than you think. When stuck, write the next <b>one sentence</b>.
+              </p>
+            </>
+          ),
+      },
+    ],
+    [openModal]
   );
 
-  /* ---- Grid (markazga yaqin, oralari ixcham, joylar almashadi) ---- */
+  // we keep a stateful copy to rotate
+  const [cards, setCards] = useState<Card[]>(initialCards);
+
+  // rotate clockwise every 20 seconds (left → center → right → bottom → left …)
+  useEffect(() => {
+    const t = setInterval(() => {
+      setCards((prev) => {
+        const copy = [...prev];
+        // move last item to the front (clockwise look)
+        copy.unshift(copy.pop()!);
+        return copy;
+      });
+    }, 20000);
+    return () => clearInterval(t);
+  }, []);
+
+  // Layout positions: we render in 2x2 with nicer spacing & inner frame
+  const grid = (
+    <div className="grid gap-8 md:grid-cols-2">
+      {cards.map((c) => (
+        <button
+          key={c.key}
+          onClick={c.onOpen}
+          className="group relative w-full rounded-2xl bg-white/6 p-5 text-left shadow-lg ring-1 ring-white/10 transition-all hover:translate-y-[-2px] hover:bg-white/[0.10] hover:ring-white/20"
+        >
+          {/* soft inner frame */}
+          <div className="pointer-events-none absolute inset-0 rounded-2xl border border-white/10"></div>
+
+          <div className="flex items-center gap-3">
+            <span className="text-xl">{c.icon}</span>
+            <h3 className="text-base font-semibold">{c.title}</h3>
+          </div>
+          <p className="mt-2 text-sm text-white/80">{c.desc}</p>
+        </button>
+      ))}
+    </div>
+  );
+
   return (
     <>
-      <div
-        className="
-          grid gap-4 md:gap-6
-          grid-cols-1 sm:grid-cols-2
-          xl:grid-cols-2
-          place-items-center
-        "
-      >
-        {cards.map((c) => (
-          <div key={c.key} className="w-full max-w-[520px]">
-            <Card item={c} onClick={() => onOpen(c.key)} />
-          </div>
-        ))}
+      {/* container with subtle frame and tighter padding to avoid clipping */}
+      <div className="rounded-3xl border border-white/10 p-5 ring-1 ring-white/10">
+        {grid}
       </div>
 
-      {/* Modal — fonni bosib ham yopiladi */}
-      <AdviceModal open={modal.open} title={modal.title} onClose={close}>
-        {/* fonni bosishni ushlash: komponent ichida overlay bor bo‘lsa, 
-            u ustida onClick bilan close() chaqiriladi. 
-            Agar sizning AdviceModal’da bo‘lmasa, yuqorida qo‘shgan Escape ishlaydi. */}
-        {modal.content}
-      </AdviceModal>
+      <Modal open={modalOpen} title={modalTitle} onClose={closeModal}>
+        {modalBody}
+      </Modal>
     </>
   );
 }
