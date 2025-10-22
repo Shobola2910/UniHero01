@@ -2,31 +2,30 @@
 
 export const BRAND = {
   name: "UniHero",
-  tagline: "Resources and tools for students",
+  tagline: "For Students, By Students",
   domain: "unihero.uz",
 
-  // Assets (local to /public)
+  // Assets (all stored in /public/brand)
   assets: {
-    logoLight: "/brand/logo.svg",
-    logoDark: "/brand/logo-dark.svg",
-    wordmark: "/brand/wordmark.svg", // optional
-    hero: "/brand/hero.jpg",
-    og: "/brand/og.png",
-    favicon: "/brand/favicon.png",
+    logoLight: "/brand/logo-light.png",   // main light logo
+    logoDark: "/brand/logo-dark.png",     // dark-mode logo
+    wordmark: "/brand/wordmark.png",      // optional horizontal wordmark
+    hero: "/brand/hero.jpg",              // homepage hero/banner
+    og: "/opengraph-image.png",           // OpenGraph preview (1200×630)
+    favicon: "/brand/favicon.png",        // browser/tab icon
   },
 
-  // Controls
-  enableAnimations: true, // flip to false to disable all framer-motion animations
+  // Global animation controls
+  enableAnimations: true,
   defaultRevealMs: 0.35,
 
-  // Prompt/text replacements (used by the codemod script)
+  // Text snippets for auto-injection or codemods
   prompts: {
     productName: "UniHero",
-    shortDescription: "Study smarter with UniHero.",
+    shortDescription: "For Students, By Students",
     longDescription:
-      "UniHero helps students discover resources, manage tasks, and stay motivated.",
+      "UniHero is a community platform that helps university students find resources, prepare for exams, and stay motivated.",
     ctaPrimary: "Get Started",
     ctaSecondary: "Learn More",
   },
 } as const;
-
