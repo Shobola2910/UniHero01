@@ -20,7 +20,9 @@ export default function SiteHeader() {
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = open ? "hidden" : prev || "";
-    return () => { document.body.style.overflow = prev; };
+    return () => {
+      document.body.style.overflow = prev;
+    };
   }, [open]);
 
   return (
@@ -51,14 +53,14 @@ export default function SiteHeader() {
         </button>
       </div>
 
-      {/* Fullscreen mobile drawer */}
+      {/* === FULLSCREEN MOBILE MENU — solid background, simple links === */}
       {open && (
         <div className="md:hidden fixed inset-0 z-[70]">
-          {/* dark backdrop */}
-          <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
+          {/* solid background (bo'sh fon) */}
+          <div className="absolute inset-0 bg-brand-950" />
 
-          {/* panel: full screen on mobile */}
-          <div className="absolute inset-0 bg-brand-950 safe-px safe-pt safe-pb">
+          {/* content */}
+          <div className="relative h-full w-full safe-px safe-pt safe-pb">
             <div className="mx-auto max-w-6xl px-4">
               <div className="h-16 flex items-center justify-between">
                 <span className="font-semibold text-brand-100 text-lg">Menu</span>
@@ -71,16 +73,14 @@ export default function SiteHeader() {
                 </button>
               </div>
 
-              {/* big tappable links */}
-              <nav className="mt-2 grid gap-3">
+              {/* oddiy list — kartochkasiz, fon yo‘q */}
+              <nav className="mt-4 divide-y divide-white/10">
                 {links.map((l) => (
                   <Link
                     key={l.href}
                     href={l.href}
                     onClick={() => setOpen(false)}
-                    className="rounded-2xl px-4 py-4 bg-white/8 border border-white/12
-                               text-brand-100 text-base font-medium
-                               active:scale-[0.99] transition"
+                    className="block py-4 text-brand-100 text-lg"
                   >
                     {l.label}
                   </Link>
