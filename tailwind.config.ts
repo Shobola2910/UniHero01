@@ -7,11 +7,11 @@ export default {
       colors: {
         // UniHero brand (ko‘klar)
         brand: {
-          950: "#021024", // Deep Navy
-          900: "#052659", // Navy
-          600: "#5483B3", // Steel Blue
-          400: "#7DA0CA", // Light Steel
-          100: "#C1E8FF", // Powder Blue
+          950: "#021024",
+          900: "#052659",
+          600: "#5483B3",
+          400: "#7DA0CA",
+          100: "#C1E8FF",
         },
       },
       backgroundImage: {
