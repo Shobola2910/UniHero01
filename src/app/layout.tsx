@@ -26,11 +26,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-dvh bg-brand-950 text-white antialiased">
-        {/* Header, main, footer */}
-        {/* ... */}
+      <body className="min-h-dvh uh-bg text-white antialiased">
+        {/* Header */}
+        {/* <SiteHeader /> qo'yilgan bo'lsin */}
+        {/* Page */}
+        {children}
+        {/* <SiteFooter /> */}
       </body>
     </html>
   );
 }
-
