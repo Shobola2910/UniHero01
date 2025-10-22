@@ -2,12 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Design tokens (CSS vars) – kerak bo‘lsa yaqin chiroqlarni o‘zgartirish oson */
+/* Design tokens (CSS vars) */
 :root {
   --uh-bg: #021024;         /* brand-950 */
   --uh-bg-soft: #052659;    /* brand-900 */
-  --uh-text: #0b1220;       /* light rejim matn */
-  --uh-text-inv: #ffffff;   /* oq matn */
+  --uh-text: #0b1220;       /* light text */
+  --uh-text-inv: #ffffff;   /* inverse text */
   --uh-accent: #5483B3;     /* brand-600 */
   --uh-accent-weak: #7DA0CA;/* brand-400 */
   --uh-surface: #C1E8FF;    /* brand-100 */
@@ -16,29 +16,29 @@
 html, body { height: 100%; }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --uh-text: #e6eef8;
-  }
+  :root { --uh-text: #e6eef8; }
 }
 
 /* App background – clean, no horizontal band */
 .uh-bg {
-  /* soddalashtirilgan, chiziqsiz gradient */
+  /* smooth, band-free gradient */
   background:
     radial-gradient(900px 500px at 15% -10%, rgba(125,160,202,.16), transparent 65%),
     radial-gradient(700px 380px at 85% 0%,   rgba(84,131,179,.12),  transparent 60%),
     linear-gradient(180deg, #052659 0%, #021024 100%);
- /* fallback – faqat vertical gradient */
-.uh-bg {
-  background: linear-gradient(180deg, #052659 0%, #021024 100%);
+  background-repeat: no-repeat;
   background-attachment: fixed;
 }
 
-
+/* Glass card helper */
 .uh-card {
   @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md shadow-[0_10px_40px_rgba(2,16,36,.35)];
 }
 
 /* Subtle hover float for pills (socials + nav) */
-@keyframes uh-floaty { 0%{transform:translateY(0)}50%{transform:translateY(-2px)}100%{transform:translateY(0)}}
+@keyframes uh-floaty {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2px) scale(1.02); }
+  100% { transform: translateY(0) scale(1); }
+}
 .uh-pill:hover { animation: uh-floaty 600ms ease-out; }
