@@ -21,7 +21,6 @@ html, body { height: 100%; }
 
 /* App background – clean, no horizontal band */
 .uh-bg {
-  /* smooth, band-free gradient */
   background:
     radial-gradient(900px 500px at 15% -10%, rgba(125,160,202,.16), transparent 65%),
     radial-gradient(700px 380px at 85% 0%,   rgba(84,131,179,.12),  transparent 60%),
@@ -35,6 +34,15 @@ html, body { height: 100%; }
   @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md shadow-[0_10px_40px_rgba(2,16,36,.35)];
 }
 
+/* Safe area (iOS) */
+.safe-px { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+.safe-pt { padding-top:  env(safe-area-inset-top);  }
+.safe-pb { padding-bottom: env(safe-area-inset-bottom); }
+
+/* Hide mobile scrollers (for horizontal carousels) */
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+
 /* Subtle hover float for pills (socials + nav) */
 @keyframes uh-floaty {
   0% { transform: translateY(0) scale(1); }
@@ -42,3 +50,8 @@ html, body { height: 100%; }
   100% { transform: translateY(0) scale(1); }
 }
 .uh-pill:hover { animation: uh-floaty 600ms ease-out; }
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
+}
