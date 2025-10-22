@@ -35,3 +35,13 @@ html, body { height: 100%; }
 .uh-card {
   @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md shadow-[0_10px_40px_rgba(2,16,36,.35)];
 }
+/* subtle hover "float" */
+@keyframes uh-floaty {
+  0%   { transform: translateY(0) scale(1); }
+  50%  { transform: translateY(-2px) scale(1.02); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.uh-pill:hover {
+  animation: uh-floaty 600ms ease-out;
+}
