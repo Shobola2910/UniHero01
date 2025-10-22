@@ -77,7 +77,7 @@ export default function WhyLove() {
   ];
 
   const stats = [
-    { value: "100+",  label: "Students helped" },
+    { value: "180+",  label: "Students helped" },
     { value: "50+",   label: "Helpful resources" },
     { value: "~5 min",label: "Avg. reply time" },
     { value: "24/7",  label: "Support availability" },
