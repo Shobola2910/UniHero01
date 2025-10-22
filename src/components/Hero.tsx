@@ -9,6 +9,9 @@ export default function Hero() {
           <Badge>✨ For Students, By Students</Badge>
         </div>
 
+        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
+          UniHero — For Students, By Students
+        </h1>
 
         <p className="mt-4 max-w-2xl text-brand-100/90">
           Practical resources, a helpful community, and simple tools. Learn smarter with
