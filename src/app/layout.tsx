@@ -22,14 +22,15 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: BRAND.assets.favicon }],
 };
 
+// ...
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.className} suppressHydrationWarning>
-      <body className="min-h-dvh bg-white text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-100">
-        <SiteHeader />
-        <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
-        <SiteFooter />
+    <html lang="en" suppressHydrationWarning>
+      <body className="min-h-dvh bg-brand-950 text-white antialiased">
+        {/* Header, main, footer */}
+        {/* ... */}
       </body>
     </html>
   );
 }
+
