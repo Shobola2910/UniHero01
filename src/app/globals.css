@@ -21,27 +21,16 @@ html, body { height: 100%; }
   }
 }
 
-/* Utility helpers */
-.u-container { @apply mx-auto max-w-6xl px-4; }
-.u-card { @apply rounded-2xl shadow-soft bg-white/90 dark:bg-zinc-900/60; }
-/* BG gradient for whole app */
+/* App background and glass card helpers */
 .uh-bg {
   background: radial-gradient(1200px 600px at 20% -10%, rgba(125,160,202,.25), transparent 60%),
               radial-gradient(1200px 600px at 90% 0%, rgba(84,131,179,.18), transparent 55%),
               linear-gradient(180deg, #052659 0%, #021024 60%);
 }
-
-/* Card glass look */
 .uh-card {
   @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md shadow-[0_10px_40px_rgba(2,16,36,.35)];
 }
-/* subtle hover "float" */
-@keyframes uh-floaty {
-  0%   { transform: translateY(0) scale(1); }
-  50%  { transform: translateY(-2px) scale(1.02); }
-  100% { transform: translateY(0) scale(1); }
-}
 
-.uh-pill:hover {
-  animation: uh-floaty 600ms ease-out;
-}
+/* Subtle hover float for pills (socials + nav) */
+@keyframes uh-floaty { 0%{transform:translateY(0)}50%{transform:translateY(-2px)}100%{transform:translateY(0)}}
+.uh-pill:hover { animation: uh-floaty 600ms ease-out; }
