@@ -2,4 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Design tokens (CSS vars) – kerak bo‘lsa yaqin chiroqlarni o‘zgartirish oson */
+:root {
+  --uh-bg: #021024;         /* brand-950 */
+  --uh-bg-soft: #052659;    /* brand-900 */
+  --uh-text: #0b1220;       /* light rejim matn */
+  --uh-text-inv: #ffffff;   /* oq matn */
+  --uh-accent: #5483B3;     /* brand-600 */
+  --uh-accent-weak: #7DA0CA;/* brand-400 */
+  --uh-surface: #C1E8FF;    /* brand-100 */
+}
+
 html, body { height: 100%; }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --uh-text: #e6eef8;
+  }
+}
+
+/* Utility helpers */
+.u-container { @apply mx-auto max-w-6xl px-4; }
+.u-card { @apply rounded-2xl shadow-soft bg-white/90 dark:bg-zinc-900/60; }
