@@ -21,12 +21,17 @@ html, body { height: 100%; }
   }
 }
 
-/* App background and glass card helpers */
+/* App background – clean, no horizontal band */
 .uh-bg {
-  background: radial-gradient(1200px 600px at 20% -10%, rgba(125,160,202,.25), transparent 60%),
-              radial-gradient(1200px 600px at 90% 0%, rgba(84,131,179,.18), transparent 55%),
-              linear-gradient(180deg, #052659 0%, #021024 60%);
+  /* soddalashtirilgan, chiziqsiz gradient */
+  background:
+    radial-gradient(900px 500px at 15% -10%, rgba(125,160,202,.16), transparent 65%),
+    radial-gradient(700px 380px at 85% 0%,   rgba(84,131,179,.12),  transparent 60%),
+    linear-gradient(180deg, #052659 0%, #021024 100%);
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* silliq scroll va band yo'qoladi */
 }
+
 .uh-card {
   @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md shadow-[0_10px_40px_rgba(2,16,36,.35)];
 }
