@@ -3,7 +3,7 @@ import Button from "@/components/ui/Button";
 
 export default function Hero() {
   return (
-    <section className="mx-auto max-w-6xl px-4 py-10 md:py-16">
+    <section className="py-10 md:py-16">
       <div className="uh-card p-6 md:p-10 text-brand-100">
         <div className="mb-4">
           <Badge>✨ For Students, By Students</Badge>
@@ -14,8 +14,8 @@ export default function Hero() {
         </h1>
 
         <p className="mt-4 max-w-2xl text-brand-100/90">
-          Practical resources, a helpful community, and simple tools. Learn smarter with study guides,
-          templates and quick support.
+          Practical resources, a helpful community, and simple tools. Learn smarter with
+          study guides, templates and quick support.
         </p>
 
         <div className="mt-6 flex gap-3">
