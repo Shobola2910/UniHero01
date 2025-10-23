@@ -2,7 +2,14 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { X } from "lucide-react";
+
+function XIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <path d="M18 6 6 18M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 type Props = {
   open: boolean;
@@ -12,11 +19,8 @@ type Props = {
 export default function MobileMenu({ open, onClose }: Props) {
   // lock body scroll while menu is open
   useEffect(() => {
-    if (open) {
-      document.body.classList.add("overflow-hidden");
-    } else {
-      document.body.classList.remove("overflow-hidden");
-    }
+    if (open) document.body.classList.add("overflow-hidden");
+    else document.body.classList.remove("overflow-hidden");
     return () => document.body.classList.remove("overflow-hidden");
   }, [open]);
 
@@ -48,29 +52,17 @@ export default function MobileMenu({ open, onClose }: Props) {
             aria-label="Close menu"
             className="p-2 rounded-lg hover:bg-white/10"
           >
-            <X className="h-5 w-5" />
+            <XIcon />
           </button>
         </div>
 
         <nav className="px-4 py-4 space-y-2">
-          <Link href="/" onClick={onClose} className="block rounded-2xl px-4 py-3 bg-brand-950/40 border border-brand-900/40">
-            Home
-          </Link>
-          <Link href="/about" onClick={onClose} className="block rounded-2xl px-4 py-3 bg-brand-950/40 border border-brand-900/40">
-            About
-          </Link>
-          <Link href="/resources" onClick={onClose} className="block rounded-2xl px-4 py-3 bg-brand-950/40 border border-brand-900/40">
-            Resources
-          </Link>
-          <Link href="/community" onClick={onClose} className="block rounded-2xl px-4 py-3 bg-brand-950/40 border border-brand-900/40">
-            Community
-          </Link>
-          <Link href="/events" onClick={onClose} className="block rounded-2xl px-4 py-3 bg-brand-950/40 border border-brand-900/40">
-            Events
-          </Link>
-          <Link href="/contact" onClick={onClose} className="block rounded-2xl px-4 py-3 bg-brand-950/40 border border-brand-900/40">
-            Contact
-          </Link>
+          <Link href="/" onClick={onClose} className="block rounded-2xl px-4 py-3 bg-brand-950/40 border border-brand-900/40">Home</Link>
+          <Link href="/about" onClick={onClose} className="block rounded-2xl px-4 py-3 bg-brand-950/40 border border-brand-900/40">About</Link>
+          <Link href="/resources" onClick={onClose} className="block rounded-2xl px-4 py-3 bg-brand-950/40 border border-brand-900/40">Resources</Link>
+          <Link href="/community" onClick={onClose} className="block rounded-2xl px-4 py-3 bg-brand-950/40 border border-brand-900/40">Community</Link>
+          <Link href="/events" onClick={onClose} className="block rounded-2xl px-4 py-3 bg-brand-950/40 border border-brand-900/40">Events</Link>
+          <Link href="/contact" onClick={onClose} className="block rounded-2xl px-4 py-3 bg-brand-950/40 border border-brand-900/40">Contact</Link>
         </nav>
       </aside>
     </>
