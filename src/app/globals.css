@@ -55,3 +55,11 @@ html, body { height: 100%; }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
 }
+/* iOS safe area padding for the drawer header/footer if needed */
+@supports (padding: max(0px)) {
+  .safe-top { padding-top: max(env(safe-area-inset-top), 0.75rem); }
+  .safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), 0.75rem); }
+}
+
+/* Accessible focus */
+:focus-visible { outline: 2px solid #C1E8FF; outline-offset: 2px; }
