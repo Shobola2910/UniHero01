@@ -6,19 +6,17 @@ import { useEffect, useRef, useState } from "react";
 type Item = { emoji: string; date: string; title: string; src: string };
 type Props = { items: Item[] };
 
-/**
- * 3 ta ko'rinadigan card. Markaz kattaroq, yonlar blur va kichik.
- * Card ENI qat'iy: clamp(260px, 28vw, 420px) — shuning uchun "ultra katta" bo'lib ketmaydi.
+/** 3 ta ko‘rinadigan card. Markaz kattaroq, yonlar blur/kichik.
+ *  Card ENI qat’iy: clamp(260px, 28vw, 420px) — shuning uchun “ultra katta” bo‘lib ketmaydi.
  */
 export default function AboutTimeline({ items }: Props) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
 
-  // scroll holatidan aktiv indexni hisoblash
+  // scrolldan aktiv indeksni aniqlash
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
-
     const onScroll = () => {
       const card = el.querySelector<HTMLElement>("[data-card]");
       if (!card) return;
@@ -28,7 +26,6 @@ export default function AboutTimeline({ items }: Props) {
       const i = Math.round(center / cardW - 0.5);
       setActive(Math.max(0, Math.min(items.length - 1, i)));
     };
-
     el.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => el.removeEventListener("scroll", onScroll);
@@ -51,7 +48,7 @@ export default function AboutTimeline({ items }: Props) {
       </h1>
 
       <div className="relative">
-        {/* Prev / Next (desktop) */}
+        {/* Prev/Next (desktop) */}
         <button
           onClick={() => scrollTo(Math.max(0, active - 1))}
           className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10
@@ -71,7 +68,7 @@ export default function AboutTimeline({ items }: Props) {
           ›
         </button>
 
-        {/* SCROLLER */}
+        {/* Scroller */}
         <div
           ref={scrollerRef}
           className="no-scrollbar flex gap-6 overflow-x-auto snap-x snap-mandatory
@@ -81,7 +78,6 @@ export default function AboutTimeline({ items }: Props) {
           {items.map((it, i) => {
             const isActive = i === active;
             const isNear = Math.abs(i - active) === 1;
-
             const scale = isActive ? "scale-100" : "scale-[0.94]";
             const blur = isActive ? "blur-0" : isNear ? "blur-[1px]" : "blur-[2px]";
             const ring = isActive ? "ring-1 ring-white/30 shadow-soft" : "";
@@ -92,7 +88,6 @@ export default function AboutTimeline({ items }: Props) {
                 data-card
                 className={`snap-center transition-all duration-300 ease-out ${scale}`}
                 style={{
-                  // MUHIM: qat'iy eni — shu bilan juda katta bo'lib ketmaydi
                   width: "clamp(260px, 28vw, 420px)",
                   minWidth: "clamp(260px, 28vw, 420px)",
                   maxWidth: "420px",
@@ -109,7 +104,6 @@ export default function AboutTimeline({ items }: Props) {
                       priority={i === 0}
                     />
                   </div>
-
                   <div className="px-4 md:px-5 py-4 text-white">
                     <div className="text-base md:text-lg font-semibold flex items-center gap-2">
                       <span aria-hidden>{it.emoji}</span>
@@ -125,7 +119,7 @@ export default function AboutTimeline({ items }: Props) {
         </div>
       </div>
 
-      {/* DOTS */}
+      {/* Dots */}
       <div className="mt-4 flex justify-center gap-2">
         {items.map((_, i) => (
           <button
