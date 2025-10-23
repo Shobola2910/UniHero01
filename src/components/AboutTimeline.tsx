@@ -1,50 +1,39 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Item = {
   emoji: string;
   date: string;
   title: string;
-  src: string; // image path in /public
+  src: string; // /public ichidagi rasm yo'li
 };
 
-type Props = {
-  items: Item[];
-};
+type Props = { items: Item[] };
 
+/**
+ * 3 ta karta ko'rinadi. Markazdagi kattaroq va aniq,
+ * yonidagilar kichikroq va blur. Touch/mouse drag bilan scroll.
+ */
 export default function AboutTimeline({ items }: Props) {
-  const scrollerRef = useRef<HTMLDivElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
-  const [cardW, setCardW] = useState(0);
 
-  // measure card width (based on first child)
+  // active indeksni scrollga qarab hisoblash
   useEffect(() => {
-    const el = scrollerRef.current;
+    const el = wrapRef.current;
     if (!el) return;
-    const firstCard = el.querySelector<HTMLElement>("[data-card]");
-    if (!firstCard) return;
-
-    const measure = () => {
-      setCardW(firstCard.getBoundingClientRect().width);
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, []);
-
-  // derive center index from scrollLeft
-  useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el || !cardW) return;
 
     let raf = 0;
     const onScroll = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
+        const card = el.querySelector<HTMLElement>("[data-card]");
+        if (!card) return;
+        const cardW = card.getBoundingClientRect().width + 24; // width + gap
         const center = el.scrollLeft + el.clientWidth / 2;
-        const i = Math.round(center / (cardW + 16 /* gap */) - 0.5);
+        const i = Math.round(center / cardW - 0.5);
         const clamped = Math.max(0, Math.min(items.length - 1, i));
         setActive(clamped);
       });
@@ -55,98 +44,93 @@ export default function AboutTimeline({ items }: Props) {
       el.removeEventListener("scroll", onScroll);
       cancelAnimationFrame(raf);
     };
-  }, [items.length, cardW]);
+  }, [items.length]);
 
-  const scrollTo = (i: number) => {
-    const el = scrollerRef.current;
-    if (!el || !cardW) return;
-    const x = i * (cardW + 16); // card width + gap
-    el.scrollTo({ left: x, behavior: "smooth" });
+  const scrollToIndex = (i: number) => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const card = el.querySelector<HTMLElement>("[data-card]");
+    if (!card) return;
+    const cardW = card.getBoundingClientRect().width + 24;
+    el.scrollTo({ left: i * cardW, behavior: "smooth" });
   };
 
-  const canPrev = active > 0;
-  const canNext = active < items.length - 1;
-
   return (
-    <section className="u-container py-12 md:py-16">
-      <h2 className="text-2xl md:text-3xl font-semibold text-white text-center mb-6">
+    <section className="u-container py-10 md:py-16">
+      <h1 className="text-center text-2xl md:text-3xl font-semibold text-white mb-6">
         About UniHero
-      </h2>
+      </h1>
 
       <div className="relative">
-        {/* Prev / Next buttons */}
+        {/* LEFT / RIGHT tugmalar (desktop) */}
         <button
-          onClick={() => canPrev && scrollTo(active - 1)}
-          disabled={!canPrev}
+          onClick={() => scrollToIndex(Math.max(0, active - 1))}
+          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10
+                     items-center justify-center rounded-full bg-white/10 text-white
+                     border border-white/20 backdrop-blur hover:bg-white/20"
           aria-label="Previous"
-          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center
-                     rounded-full bg-white/10 text-white border border-white/20 backdrop-blur
-                     hover:bg-white/20 disabled:opacity-40"
         >
           ‹
         </button>
-
         <button
-          onClick={() => canNext && scrollTo(active + 1)}
-          disabled={!canNext}
+          onClick={() =>
+            scrollToIndex(Math.min(items.length - 1, active + 1))
+          }
+          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10
+                     items-center justify-center rounded-full bg-white/10 text-white
+                     border border-white/20 backdrop-blur hover:bg-white/20"
           aria-label="Next"
-          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center
-                     rounded-full bg-white/10 text-white border border-white/20 backdrop-blur
-                     hover:bg-white/20 disabled:opacity-40"
         >
           ›
         </button>
 
-        {/* Scroller */}
+        {/* SCROLLER */}
         <div
-          ref={scrollerRef}
-          className="no-scrollbar flex gap-4 overflow-x-auto snap-x snap-mandatory px-2 md:px-8 py-4
-                     scroll-smooth select-none touch-pan-x"
+          ref={wrapRef}
+          className="no-scrollbar flex gap-6 overflow-x-auto snap-x snap-mandatory px-2 md:px-8 py-2
+                     scroll-smooth touch-pan-x select-none"
           style={{ scrollPaddingLeft: "8px", scrollPaddingRight: "8px" }}
         >
           {items.map((it, i) => {
-            // visual states
             const isActive = i === active;
-            const near = Math.abs(i - active) === 1;
+            const isNear = Math.abs(i - active) === 1;
 
             const scale = isActive ? "scale-100" : "scale-[0.92]";
-            const blur = isActive ? "blur-0" : near ? "blur-[1px]" : "blur-[2px]";
-            const opacity = isActive ? "opacity-100" : "opacity-80";
+            const blur = isActive ? "blur-0" : isNear ? "blur-[1px]" : "blur-[2px]";
+            const ring =
+              isActive ? "ring-1 ring-white/30 shadow-soft" : "ring-0";
 
             return (
               <article
                 key={i}
                 data-card
-                className={`snap-center transition-all duration-300 ease-out
-                           ${scale} ${opacity}`}
+                className={`snap-center transition-all duration-300 ease-out ${scale}`}
                 style={{
-                  // consistent sizes across breakpoints
-                  // (center feels larger due to scale and shadow)
+                  // uchta ko‘rinishi uchun kengliklar
                   minWidth: "85vw",
                 }}
               >
                 <div
-                  className={`relative rounded-3xl overflow-hidden bg-brand-900/40 border border-white/10
-                              shadow-soft ${blur}`}
+                  className={`relative overflow-hidden rounded-3xl bg-brand-900/40 border border-white/10 ${ring}`}
                 >
-                  <div className="relative w-full aspect-[16/9]">
+                  <div className={`relative w-full aspect-[16/9] ${blur}`}>
                     <Image
                       src={it.src}
                       alt={it.title}
                       fill
-                      sizes="(max-width:768px) 85vw, 60vw"
+                      sizes="(max-width: 768px) 85vw, (max-width: 1024px) 60vw, 40vw"
                       className="object-cover"
                       priority={i === 0}
                     />
                   </div>
 
+                  {/* Pastki matn bloki */}
                   <div className="px-5 md:px-6 py-4 text-white">
                     <div className="text-lg md:text-xl font-semibold flex items-center gap-2">
                       <span aria-hidden>{it.emoji}</span>
                       {it.title}
                     </div>
                     <div className="text-sm opacity-75 mt-1">{it.date}</div>
-                    {/* underline like your reference */}
                     <div className="mt-3 h-[2px] w-40 bg-white/60 rounded-full" />
                   </div>
                 </div>
@@ -156,19 +140,21 @@ export default function AboutTimeline({ items }: Props) {
         </div>
       </div>
 
-      {/* Dots */}
+      {/* DOTS */}
       <div className="mt-4 flex justify-center gap-2">
         {items.map((_, i) => (
           <button
             key={i}
-            aria-label={`Go to item ${i + 1}`}
-            onClick={() => scrollTo(i)}
-            className={`h-2 w-2 rounded-full transition
-              ${i === active ? "bg-white" : "bg-white/40"}`}
+            onClick={() => scrollToIndex(i)}
+            aria-label={`Go to ${i + 1}`}
+            className={`h-2 w-2 rounded-full transition ${
+              i === active ? "bg-white" : "bg-white/40"
+            }`}
           />
         ))}
       </div>
 
+      {/* helpers */}
       <style jsx global>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -176,7 +162,7 @@ export default function AboutTimeline({ items }: Props) {
           [data-card] { min-width: 60vw; }
         }
         @media (min-width: 1024px) {
-          [data-card] { min-width: 42vw; }
+          [data-card] { min-width: 38vw; } /* 3 ta ko'rinishi uchun */
         }
       `}</style>
     </section>
