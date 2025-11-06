@@ -4,8 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const { name, username, comment } = await req.json();
-    const token = process.env.8466272474:AAEVIjEGlTWiluwpK-ULtkqXs91Hv9uVuFA;
-    const chatId = process.env.7711916897;
+
+    // ✅ Env o‘qish
+    const token = process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
 
     if (!token || !chatId) {
       return NextResponse.json(
