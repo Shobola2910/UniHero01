@@ -1,7 +1,7 @@
 // src/app/layout.tsx
 import "./globals.css";
 import type { Metadata } from "next";
-import Navbar from "@/components/Navbar"; // ✅ faqat yangi Navbar
+import Navbar from "../components/Navbar";
 
 export const metadata: Metadata = {
   title: "UniHero — For Students, By Students",
@@ -12,7 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <Navbar />       {/* ✅ bitta header shu */}
+        <Navbar />
         {children}
       </body>
     </html>
