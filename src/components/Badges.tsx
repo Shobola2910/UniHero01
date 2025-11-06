@@ -15,14 +15,12 @@ const ITEMS: Item[] = [
 ];
 
 export default function Badges() {
-  // infinite ko‘rinish uchun dublikat
   const data = useMemo(() => [...ITEMS, ...ITEMS], []);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [activeIdx, setActiveIdx] = useState(0);
   const pausedRef = useRef(false);
   const sizesRef = useRef<{ cardW: number; gap: number }>({ cardW: 540, gap: 24 });
 
-  // karta eni + gap ni o‘lchash
   const measure = () => {
     const el = scrollerRef.current;
     if (!el) return;
@@ -48,7 +46,7 @@ export default function Badges() {
       setActiveIdx(next);
       el.scrollTo({ left: next * (cardW + gap), behavior: "smooth" });
 
-      // loop: birinchi ro‘yxat tugaganda bir zumda boshiga qaytamiz
+      // loop
       if (next === ITEMS.length) {
         setTimeout(() => {
           el.scrollTo({ left: 0, behavior: "auto" });
@@ -63,7 +61,6 @@ export default function Badges() {
     };
   }, [activeIdx, data.length]);
 
-  // g‘ildirakni (wheel) gorizontalga burish
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
