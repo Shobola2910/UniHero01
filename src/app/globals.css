@@ -63,3 +63,12 @@ html, body { height: 100%; }
 
 /* Accessible focus */
 :focus-visible { outline: 2px solid #C1E8FF; outline-offset: 2px; }
+
+/* globals.css yoki umumiy stylesheet */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE va Edge */
+  scrollbar-width: none;    /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;            /* Chrome, Safari */
+}
