@@ -5,7 +5,6 @@ export async function POST(req: NextRequest) {
   try {
     const { name, username, comment } = await req.json();
 
-    // ✅ Env o‘qish
     const token = process.env.TELEGRAM_BOT_TOKEN;
     const chatId = process.env.TELEGRAM_CHAT_ID;
 
