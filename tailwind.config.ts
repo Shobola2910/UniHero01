@@ -1,30 +1,35 @@
+// tailwind.config.ts
 import type { Config } from "tailwindcss";
 
 export default {
-  content: ["./src/**/*.{ts,tsx}"],
+  content: ["./src/**/*.{ts,tsx}"], // sizdagi pathga moslang
   theme: {
     extend: {
+      // 1) xs breakpoint (480px atrofida)
+      screens: {
+        xs: "480px",
+      },
+      // 2) brand rangiga 950 qo‘shib qo‘yamiz (Tailwind indigo-950 ga yaqin)
       colors: {
-        // UniHero brand (ko‘klar)
         brand: {
-          950: "#021024",
-          900: "#052659",
-          600: "#5483B3",
-          400: "#7DA0CA",
-          100: "#C1E8FF",
+          50:  "#EEF2FF",
+          100: "#E0E7FF",
+          200: "#C7D2FE",
+          300: "#A5B4FC",
+          400: "#818CF8",
+          500: "#6366F1",
+          600: "#4F46E5",
+          700: "#4338CA",
+          800: "#3730A3",
+          900: "#312E81",
+          950: "#1E1B4B", // <-- qo'shildi
         },
       },
-      backgroundImage: {
-        "hero-gradient":
-          "linear-gradient(135deg, #021024 0%, #052659 45%, #5483B3 100%)",
-        "card-gradient":
-          "linear-gradient(180deg, rgba(2,16,36,.06), rgba(2,16,36,.12))",
-      },
       boxShadow: {
-        soft: "0 10px 30px rgba(2,16,36,.12)",
+        soft: "0 8px 30px rgba(31,41,55,0.08)",
       },
       borderRadius: {
-        "2xl": "16px",
+        "2xl": "1rem",
       },
     },
   },
