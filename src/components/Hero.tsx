@@ -15,18 +15,10 @@ export default function Hero() {
             Learn smarter with study guides, templates and quick support.
           </p>
           <div className="mt-6 flex gap-3">
-            <a
-              className="inline-flex items-center justify-center rounded-2xl bg-indigo-600 px-5 py-3 font-semibold text-white hover:bg-indigo-500"
-              href="https://t.me/UniHero_News"
-              target="_blank"
-              rel="noreferrer"
-            >
+            <a className="inline-flex items-center justify-center rounded-2xl bg-indigo-600 px-5 py-3 font-semibold text-white hover:bg-indigo-500" href="https://t.me/UniHero_News" target="_blank" rel="noreferrer">
               Join the Community
             </a>
-            <a
-              className="inline-flex items-center justify-center rounded-2xl bg-white/10 px-5 py-3 font-semibold text-white hover:bg-white/20"
-              href="#about"
-            >
+            <a className="inline-flex items-center justify-center rounded-2xl bg-white/10 px-5 py-3 font-semibold text-white hover:bg-white/20" href="#about">
               Learn More
             </a>
           </div>
