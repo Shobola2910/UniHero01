@@ -1,74 +1,120 @@
+/* --- Tailwind layers --- */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Design tokens (CSS vars) */
+/* ---------------------------
+   Design tokens (CSS vars)
+----------------------------*/
 :root {
-  --uh-bg: #021024;         /* brand-950 */
-  --uh-bg-soft: #052659;    /* brand-900 */
-  --uh-text: #0b1220;       /* light text */
-  --uh-text-inv: #ffffff;   /* inverse text */
-  --uh-accent: #5483B3;     /* brand-600 */
-  --uh-accent-weak: #7DA0CA;/* brand-400 */
-  --uh-surface: #C1E8FF;    /* brand-100 */
+  /* Colors (dark-first UI) */
+  --uh-bg: #021024;            /* page background (deep)  */
+  --uh-bg-soft: #052659;       /* page background (softer) */
+  --uh-text: #e6eef8;          /* default text on dark bg  */
+  --uh-text-inv: #ffffff;      /* inverse text (pure white) */
+  --uh-accent: #5483B3;        /* primary brand */
+  --uh-accent-weak: #7DA0CA;   /* lighter brand */
+  --uh-surface: #0c1a33;       /* cards/blocks surface on dark */
+
+  /* Layout */
+  --uh-radius: 16px;
+  --uh-blur: 12px;
+
+  /* Accessibility */
+  color-scheme: dark;          /* native inputs in dark style */
 }
 
 html, body { height: 100%; }
-
-@media (prefers-color-scheme: dark) {
-  :root { --uh-text: #e6eef8; }
+body {
+  background-color: var(--uh-bg);
+  color: var(--uh-text);
 }
 
-/* App background – clean, no horizontal band */
+/* Optional light scheme (agar class="light" ishlatsangiz) */
+.light {
+  --uh-text: #0b1220;
+  color-scheme: light;
+}
+
+/* ---------------------------
+   Background layer (hero/app)
+   Qo‘llash: <body class="uh-bg"> yoki yuqori wrapperda
+----------------------------*/
 .uh-bg {
   background:
     radial-gradient(900px 500px at 15% -10%, rgba(125,160,202,.16), transparent 65%),
     radial-gradient(700px 380px at 85% 0%,   rgba(84,131,179,.12),  transparent 60%),
-    linear-gradient(180deg, #052659 0%, #021024 100%);
+    linear-gradient(180deg, var(--uh-bg-soft) 0%, var(--uh-bg) 100%);
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
 
-/* Glass card helper */
-.uh-card {
-  @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md shadow-[0_10px_40px_rgba(2,16,36,.35)];
+/* iOS/WebKit’da “fixed” jank bo‘lsa – scrollga o‘tkazamiz */
+@supports (-webkit-touch-callout: none) {
+  .uh-bg { background-attachment: scroll; }
 }
 
-/* Safe area (iOS) */
-.safe-px { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
-.safe-pt { padding-top:  env(safe-area-inset-top);  }
-.safe-pb { padding-bottom: env(safe-area-inset-bottom); }
+/* ---------------------------
+   Components / helpers
+----------------------------*/
 
-/* Hide mobile scrollers (for horizontal carousels) */
-.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-.hide-scrollbar::-webkit-scrollbar { display: none; }
+/* Glass card */
+.uh-card {
+  border-radius: var(--uh-radius);
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.06);
+  backdrop-filter: blur(var(--uh-blur));
+  box-shadow: 0 10px 40px rgba(2,16,36,.35);
+}
 
-/* Subtle hover float for pills (socials + nav) */
+/* Pill (navbar & chips) – komponentda className="uh-pill" deb qo‘llang */
+.uh-pill {
+  @apply inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition;
+  border-color: rgba(255,255,255,.3);
+  background: transparent;
+  color: rgba(255,255,255,.9);
+  backdrop-filter: blur(6px);
+}
+.uh-pill:hover {
+  border-color: rgba(255,255,255,.6);
+  background: rgba(255,255,255,.08);
+  color: #fff;
+}
+
+/* Subtle hover float (ixtiyoriy animatsiya) */
 @keyframes uh-floaty {
   0% { transform: translateY(0) scale(1); }
   50% { transform: translateY(-2px) scale(1.02); }
   100% { transform: translateY(0) scale(1); }
 }
-.uh-pill:hover { animation: uh-floaty 600ms ease-out; }
+.uh-floaty:hover { animation: uh-floaty 600ms ease-out; }
 
-/* Reduce motion */
-@media (prefers-reduced-motion: reduce) {
-  * { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
-}
-/* iOS safe area padding for the drawer header/footer if needed */
+/* Safe area (iOS) */
+.safe-px { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+.safe-pt { padding-top:  env(safe-area-inset-top); }
+.safe-pb { padding-bottom: env(safe-area-inset-bottom); }
+
 @supports (padding: max(0px)) {
-  .safe-top { padding-top: max(env(safe-area-inset-top), 0.75rem); }
+  .safe-top { padding-top:    max(env(safe-area-inset-top), 0.75rem); }
   .safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), 0.75rem); }
 }
+
+/* Horizontal carousels – scrollbarni yashirish */
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
 
 /* Accessible focus */
 :focus-visible { outline: 2px solid #C1E8FF; outline-offset: 2px; }
 
-/* globals.css yoki umumiy stylesheet */
-.hide-scrollbar {
-  -ms-overflow-style: none; /* IE va Edge */
-  scrollbar-width: none;    /* Firefox */
-}
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;            /* Chrome, Safari */
+/* Text selection */
+::selection { background: var(--uh-accent); color: var(--uh-text-inv); }
+
+/* Reduce motion – animatsiyalarni minimallashtirish */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+  }
 }
