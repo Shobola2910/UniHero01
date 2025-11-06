@@ -3,9 +3,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
-type Nav = { href: string; label: string; icon: JSX.Element };
+type Nav = { href: string; label: string; icon: ReactNode };
 
 const IconHome = (
   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
@@ -35,7 +35,7 @@ const IconPhone = (
 const links: Nav[] = [
   { href: "#home",      label: "HOME",      icon: IconHome },
   { href: "#about",     label: "ABOUT",     icon: IconInfo },
-  { href: "#resources", label: "RESOURCE",  icon: IconBook },
+  { href: "#resources", label: "RESOURCES", icon: IconBook },
   { href: "#contact",   label: "CONTACT",   icon: IconPhone },
 ];
 
@@ -48,7 +48,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="#home" className="flex items-center gap-2">
           <Image
-            src="/brand/logo-dark.png"   // kerak bo'lsa logo yo'lini almashtiring
+            src="/brand/logo-dark.png"  // kerak bo'lsa yo'lini moslang
             alt="UniHero"
             width={30}
             height={30}
@@ -57,14 +57,13 @@ export default function Navbar() {
           <span className="text-lg font-semibold">UniHero</span>
         </Link>
 
-        {/* Desktop menu: pill + icon */}
+        {/* Desktop menu */}
         <nav className="hidden items-center gap-3 md:flex">
           {links.map((n) => (
             <a
               key={n.href}
               href={n.href}
-              className="group inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/0 px-4 py-2 text-sm font-medium text-white/90 backdrop-blur transition
-                         hover:border-white/60 hover:bg-white/10 hover:text-white"
+              className="group inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/0 px-4 py-2 text-sm font-medium text-white/90 backdrop-blur transition hover:border-white/60 hover:bg-white/10 hover:text-white"
             >
               <span className="text-white">{n.icon}</span>
               <span className="tracking-wide">{n.label}</span>
