@@ -1,32 +1,34 @@
 // src/components/Hero.tsx
 export default function Hero() {
   return (
-    <section className="mx-auto max-w-6xl px-4 pt-10 pb-6 md:pt-14">
-      {/* label */}
-      <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm text-white/90">
-        <span>✨</span> <span>For Students, By Students</span>
-      </div>
+    <section id="home" className="mx-auto max-w-6xl px-4 py-10 md:py-14">
+      <div className="uh-card bg-white/5 p-6 md:p-10">
+        <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm">
+          ✨ For Students, By Students
+        </span>
 
-      {/* katta card */}
-      <div className="mt-4 rounded-[28px] border border-white/10 bg-white/5 p-6 shadow-[0_10px_40px_rgba(1,28,64,.35)] md:p-10">
-        <h1 className="text-4xl font-extrabold tracking-tight text-white md:text-6xl">
-          UniHero — For Students, By Students
+        <h1 className="mt-4 text-4xl font-extrabold leading-tight md:text-5xl">
+          UniHero — For <br className="hidden sm:block" />
+          Students, By Students
         </h1>
-        <p className="mt-4 max-w-2xl text-white/80">
-          Practical resources, a helpful community, and simple tools. Learn smarter
-          with study guides, templates and quick support.
+
+        <p className="mt-3 max-w-2xl text-white/80">
+          Practical resources, a helpful community, and simple tools. Learn smarter with study guides,
+          templates and quick support.
         </p>
 
-        <div className="mt-6 flex gap-3">
+        <div className="mt-6 flex flex-wrap gap-3">
           <a
-            href="https://t.me/UniHero_News"
+            href="https://t.me/UniHero_news"
             target="_blank"
-            rel="noreferrer"
-            className="uh-btn"
+            className="rounded-xl bg-[#54ACBF] px-4 py-2 font-semibold text-[#011C40] hover:opacity-90"
           >
             Join the Community
           </a>
-          <a href="#about" className="uh-btn-ghost">
+          <a
+            href="#about"
+            className="rounded-xl border border-white/30 px-4 py-2 font-semibold hover:bg-white/10"
+          >
             Learn More
           </a>
         </div>
