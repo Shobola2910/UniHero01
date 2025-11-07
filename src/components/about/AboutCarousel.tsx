@@ -1,4 +1,3 @@
-// src/components/about/AboutSection.tsx
 "use client";
 
 import Image from "next/image";
@@ -17,11 +16,10 @@ const ITEMS: Item[] = [
 export default function AboutSection() {
   const data = useMemo(() => [...ITEMS, ...ITEMS], []);
   const scrollerRef = useRef<HTMLDivElement>(null);
-  const [activeIdx, setActiveIdx] = useState(0); // ko'rinayotgan karta
+  const [activeIdx, setActiveIdx] = useState(0);
   const pausedRef = useRef(false);
   const sizesRef = useRef<{ cardW: number; gap: number }>({ cardW: 540, gap: 24 });
 
-  // o'lchash
   const measure = () => {
     const el = scrollerRef.current;
     if (!el) return;
@@ -47,6 +45,7 @@ export default function AboutSection() {
       setActiveIdx(next);
       el.scrollTo({ left: next * (cardW + gap), behavior: "smooth" });
 
+      // loop boshi
       if (next === ITEMS.length) {
         setTimeout(() => {
           el.scrollTo({ left: 0, behavior: "auto" });
@@ -61,7 +60,6 @@ export default function AboutSection() {
     };
   }, [activeIdx, data.length]);
 
-  // g‘ildirakni gorizontalga burish
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
@@ -124,7 +122,7 @@ export default function AboutSection() {
         })}
       </div>
 
-      {/* Markazdagi title + date + chiziqlar */}
+      {/* Markaz title + sanalar chiziq bilan */}
       <div className="mt-6 text-center">
         <h4 className="text-2xl font-extrabold text-white md:text-3xl">
           <span className="mr-2" aria-hidden>🧑‍💻</span>{center.title}
