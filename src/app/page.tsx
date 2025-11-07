@@ -1,27 +1,19 @@
-// src/app/page.tsx
-import Hero from "@/components/Hero";
-import AboutCarousel from "@/components/about/AboutCarousel"; // <— AboutSection o‘rniga to‘g‘ridan-to‘g‘ri Carousel
-import Features from "@/components/Features";
-import Contact from "@/components/Contact";
+import Navbar from "@/components/Navbar";
+import AboutSection from "@/components/about/AboutSection";
+import ResourcesSection from "@/components/sections/Resources";
+import ContactSection from "@/components/ContactSection";
 
-export default function Page() {
+export default function HomePage() {
   return (
-    <main className="uh-bg">
-      <section id="home">
-        <Hero />
-      </section>
+    <>
+      <Navbar />
+      <main id="home" className="uh-bg min-h-screen pb-16">
+        {/* Heroingiz… (mavjud qismni qoldiring) */}
 
-      <section id="about">
-        <AboutCarousel />
-      </section>
-
-      <section id="resources">
-        <Features />
-      </section>
-
-      <section id="contact">
-        <Contact />
-      </section>
-    </main>
+        <AboutSection />
+        <ResourcesSection />
+        <ContactSection />
+      </main>
+    </>
   );
 }
