@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type ModalKey = null | "assign" | "exam" | "motivation" | "guides" | "hub" | "podcasts";
 
-/** ——— Podcasts roʻyxati (10 ta) ——— */
+/** ——— Podcasts (10 ta) ——— */
 const PODCASTS = [
   "https://www.youtube.com/c/aliabdaal",
   "https://www.youtube.com/c/ThomasFrank",
@@ -18,7 +18,7 @@ const PODCASTS = [
   "https://www.youtube.com/c/BeforeBreakfast",
 ];
 
-/** ——— Motivation iqtiboslari (namuna). Xohlasangiz 500 tagacha kengaytiring ——— */
+/** ——— Motivation iqtiboslari (namuna) ——— */
 const QUOTES = [
   "The only way to do great work is to love what you do. — Steve Jobs",
   "Discipline is choosing what you want most over what you want now.",
@@ -42,7 +42,7 @@ const QUOTES = [
   "Work hard in silence, let success make the noise.",
 ];
 
-/** ——— Kichik helperlar ——— */
+/** ——— Helperlar ——— */
 const sampleOne = <T,>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
 const open = (url: string) => window.open(url, "_blank", "noopener,noreferrer");
 
@@ -65,7 +65,7 @@ function Pill({
         "bg-white/10 border border-white/10 text-white",
         "px-6 py-4 text-xl font-semibold",
         "shadow-[0_6px_24px_rgba(1,28,64,.25)]",
-        "hover:bg-white/[.14] transition-colors",
+        "hover:bg-white/15 transition-colors",
         align === "right" ? "ml-auto" : "mr-auto",
         "flex items-center gap-3 justify-between",
       ].join(" ")}
@@ -85,65 +85,84 @@ function Pill({
   );
 }
 
-export default function Features() {
+export default function Resources() {
   const [modal, setModal] = useState<ModalKey>(null);
 
-  const randomQuote = useMemo(() => sampleOne(QUOTES), [modal]); // har ochilganda yangilanadi
+  const randomQuote = useMemo(() => sampleOne(QUOTES), [modal]);
   const randomPodcast = useMemo(() => sampleOne(PODCASTS), [modal]);
+
+  // ESC bilan modalni yopish
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setModal(null);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   return (
     <section id="resources" className="mx-auto max-w-6xl px-4 py-10 md:py-14">
       <h2 className="text-3xl md:text-4xl font-extrabold text-white">Resources</h2>
-      <p className="mt-1 text-white/80">Assignments, exam prep, study guides, hub va podcasts — hammasi bir joyda.</p>
+      <p className="mt-1 text-white/80">
+        Assignments, exam prep, study guides, hub va podcasts — hammasi bir joyda.
+      </p>
 
-      {/* ——— 2 ustun / markazda logo efekti ——— */}
+      {/* ——— 2 ustun / markazda logo halqasi ——— */}
       <div className="relative mt-10 grid gap-8 md:grid-cols-2">
-        {/* Chap ustun (ikon chapda) */}
+        {/* Chap ustun */}
         <div className="space-y-8">
-          <Pill label="Assignments"   icon="🗂️" onClick={() => setModal("assign")}  align="left" />
-          <Pill label="Motivation"    icon="🚀" onClick={() => setModal("motivation")} align="left" />
-          <Pill label="UniHero Hub"   icon="📣" onClick={() => setModal("hub")}       align="left" />
+          <Pill label="Assignments" icon="🗂️" onClick={() => setModal("assign")} align="left" />
+          <Pill label="Motivation" icon="🚀" onClick={() => setModal("motivation")} align="left" />
+          <Pill label="UniHero Hub" icon="📣" onClick={() => setModal("hub")} align="left" />
         </div>
 
-        {/* O‘ng ustun (ikon o‘ngda) */}
+        {/* O‘ng ustun */}
         <div className="space-y-8">
-          <Pill label="Exam Prep"     icon="📝" onClick={() => setModal("exam")}     align="right" />
-          <Pill label="Study Guides"  icon="📖" onClick={() => setModal("guides")}   align="right" />
+          <Pill label="Exam Prep" icon="📝" onClick={() => setModal("exam")} align="right" />
+          <Pill label="Study Guides" icon="📖" onClick={() => setModal("guides")} align="right" />
           <Pill label="Study Podcasts" icon="🎧" onClick={() => setModal("podcasts")} align="right" />
         </div>
 
-        {/* Markaziy logo halqasi (faqat bezak) */}
+        {/* Markaziy ring (dekor) */}
         <div className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:block">
-          <div className="grid place-items-center rounded-full border-[10px] border-white/70/60 p-4"
-               style={{ width: 220, height: 220, borderColor: "rgba(255,255,255,.7)" }}>
-            <img src="/brand/logo-light.png" alt="UniHero" className="h-28 w-28 opacity-95" />
+          <div
+            className="grid place-items-center rounded-full border-[10px] p-4"
+            style={{ width: 220, height: 220, borderColor: "rgba(255,255,255,.7)" }}
+          >
+            <img
+              src="/brand/logo-light.png"
+              alt="UniHero"
+              className="h-28 w-28 opacity-95"
+              onError={(e) => ((e.currentTarget as HTMLImageElement).style.display = "none")}
+            />
+            {/* Agar rasim topilmasa, emoji ko‘rinadi */}
+            <span className="text-6xl">🎓</span>
           </div>
         </div>
       </div>
 
-      {/* ——— Modallar (blur fon) ——— */}
+      {/* ——— Modal/Overlay ——— */}
       {modal && (
         <div
           className="fixed inset-0 z-50 grid place-items-center bg-black/60 backdrop-blur-sm p-4"
           onClick={() => setModal(null)}
+          role="dialog"
+          aria-modal="true"
         >
           {/* Assignments */}
           {modal === "assign" && (
             <div
-              className="uh-card w-full max-w-xl rounded-3xl border border-white/10 bg-[#0b274a]/95 p-7 text-white"
+              className="uh-card w-full max-w-xl rounded-3xl border border-white/10 bg-[#0b274a] bg-opacity-95 p-7 text-white"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center gap-3 text-2xl font-extrabold">
                 <span>🗂️</span> <span>Assignments</span>
               </div>
-              <p className="mt-3 text-white/85">
-                Buyurtma qilish uchun UniHero BOT’ga o‘ting.
-              </p>
+              <p className="mt-3 text-white/80">Buyurtma qilish uchun UniHero BOT’ga o‘ting.</p>
               <div className="mt-6">
                 <a
                   className="inline-flex items-center justify-center rounded-full bg-white/15 px-6 py-3 text-lg font-semibold hover:bg-white/20"
                   href="https://t.me/UniHero_BOT?start=assignments"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   Order
                 </a>
@@ -154,13 +173,13 @@ export default function Features() {
           {/* Exam Prep */}
           {modal === "exam" && (
             <div
-              className="uh-card w-full max-w-xl rounded-3xl border border-white/10 bg-[#0b274a]/95 p-7 text-white"
+              className="uh-card w-full max-w-xl rounded-3xl border border-white/10 bg-[#0b274a] bg-opacity-95 p-7 text-white"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center gap-3 text-2xl font-extrabold">
                 <span>📝</span> <span>Exam Prep</span>
               </div>
-              <p className="mt-3 text-white/85">
+              <p className="mt-3 text-white/80">
                 Barcha exam resourcelarni UniHero BOT’dan olishingiz mumkin.
               </p>
               <div className="mt-6">
@@ -168,6 +187,7 @@ export default function Features() {
                   className="inline-flex items-center justify-center rounded-full bg-white/15 px-6 py-3 text-lg font-semibold hover:bg-white/20"
                   href="https://t.me/UniHero_BOT?start=exam_prep"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   Join!
                 </a>
@@ -178,7 +198,7 @@ export default function Features() {
           {/* Motivation */}
           {modal === "motivation" && (
             <div
-              className="uh-card w-full max-w-2xl rounded-3xl border border-white/10 bg-[#0b274a]/95 p-7 text-white"
+              className="uh-card w-full max-w-2xl rounded-3xl border border-white/10 bg-[#0b274a] bg-opacity-95 p-7 text-white"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center gap-3 text-2xl font-extrabold">
@@ -196,20 +216,19 @@ export default function Features() {
           {/* Study Guides */}
           {modal === "guides" && (
             <div
-              className="uh-card w-full max-w-xl rounded-3xl border border-white/10 bg-[#0b274a]/95 p-7 text-white"
+              className="uh-card w-full max-w-xl rounded-3xl border border-white/10 bg-[#0b274a] bg-opacity-95 p-7 text-white"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center gap-3 text-2xl font-extrabold">
                 <span>📖</span> <span>Study Guides</span>
               </div>
-              <p className="mt-3 text-white/85">
-                Universitet study guide’larini bot orqali oling.
-              </p>
+              <p className="mt-3 text-white/80">Universitet study guide’larini bot orqali oling.</p>
               <div className="mt-6">
                 <a
                   className="inline-flex items-center justify-center rounded-full bg-white/15 px-6 py-3 text-lg font-semibold hover:bg-white/20"
                   href="https://t.me/UniHero_BOT?start=study_guides"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   Download
                 </a>
@@ -220,7 +239,7 @@ export default function Features() {
           {/* UniHero Hub */}
           {modal === "hub" && (
             <div
-              className="uh-card w-full max-w-xl rounded-3xl border border-white/10 bg-[#0b274a]/95 p-7 text-white"
+              className="uh-card w-full max-w-xl rounded-3xl border border-white/10 bg-[#0b274a] bg-opacity-95 p-7 text-white"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center gap-3 text-2xl font-extrabold">
@@ -232,6 +251,7 @@ export default function Features() {
                   className="inline-flex items-center gap-2 rounded-full bg-white/12 px-5 py-2.5 text-base font-semibold hover:bg-white/20"
                   href="https://t.me/UniHero_news"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   📣 UniHero_News
                 </a>
@@ -239,6 +259,7 @@ export default function Features() {
                   className="inline-flex items-center gap-2 rounded-full bg-white/12 px-5 py-2.5 text-base font-semibold hover:bg-white/20"
                   href="https://t.me/UniHero_BOT"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   🤖 UniHero BOT
                 </a>
@@ -246,6 +267,7 @@ export default function Features() {
                   className="inline-flex items-center gap-2 rounded-full bg-white/12 px-5 py-2.5 text-base font-semibold hover:bg-white/20"
                   href="https://t.me/Unihero_admin"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   👨🏻‍💻 Admin
                 </a>
@@ -256,13 +278,13 @@ export default function Features() {
           {/* Study Podcasts */}
           {modal === "podcasts" && (
             <div
-              className="uh-card w-full max-w-xl rounded-3xl border border-white/10 bg-[#0b274a]/95 p-7 text-white"
+              className="uh-card w-full max-w-xl rounded-3xl border border-white/10 bg-[#0b274a] bg-opacity-95 p-7 text-white"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center gap-3 text-2xl font-extrabold">
                 <span>🎧</span> <span>Study Podcasts</span>
               </div>
-              <p className="mt-3 text-white/85">
+              <p className="mt-3 text-white/80">
                 “Start learn” ni bosing — ro‘yxatdan tasodifiy (random) bir kanal/playlist ochiladi.
               </p>
               <div className="mt-6">
@@ -280,6 +302,7 @@ export default function Features() {
                     key={u}
                     href={u}
                     target="_blank"
+                    rel="noopener noreferrer"
                     className="rounded-full bg-white/10 px-3 py-1 text-sm hover:bg-white/20"
                   >
                     {new URL(u).host.replace("www.", "")}
