@@ -95,7 +95,7 @@ export default function Features() {
           <div className="uh-card max-w-lg w-full p-6" onClick={(e)=>e.stopPropagation()}>
             <h4 className="text-xl font-bold text-white">Assignments</h4>
             <p className="mt-2 text-white/80">
-              Buyurtma qilish uchun botga o‘ting. Orqa fon blur qilingan.
+              Go to the BOT to place an order 📨
             </p>
             <div className="mt-4 flex gap-3">
               <a className="uh-btn" href="https://t.me/UniHero_BOT?start=assignments" target="_blank">Open UniHero BOT</a>
