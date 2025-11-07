@@ -5,20 +5,16 @@ export async function POST(req: NextRequest) {
   try {
     const { name, username, comment } = await req.json();
 
-    const token = process.env.TELEGRAM_BOT_TOKEN;
-    const chatId = process.env.TELEGRAM_CHAT_ID;
-
+    const token = process.env.TELEGRAM_BOT_TOKEN!;
+    const chatId = process.env.TELEGRAM_CONTACT_CHAT_ID!;
     if (!token || !chatId) {
-      return NextResponse.json(
-        { ok: false, error: "Missing TELEGRAM_* envs" },
-        { status: 500 }
-      );
+      return NextResponse.json({ ok: false, error: "Missing TELEGRAM envs" }, { status: 500 });
     }
 
     const text =
       `🆕 UniHero Contact\n` +
-      `👤 Name: ${name}\n` +
-      `🔗 User: ${username}\n` +
+      `👤 Name: ${name || "-"}\n` +
+      `🔗 User: ${username || "-"}\n` +
       `💬 Comment: ${comment || "-"}\n` +
       `⏰ ${new Date().toISOString()}`;
 
@@ -29,15 +25,10 @@ export async function POST(req: NextRequest) {
     });
 
     if (!res.ok) {
-      const t = await res.text();
-      return NextResponse.json({ ok: false, error: t }, { status: 500 });
+      return NextResponse.json({ ok: false, error: await res.text() }, { status: 500 });
     }
-
     return NextResponse.json({ ok: true });
   } catch (e: any) {
-    return NextResponse.json(
-      { ok: false, error: e?.message || "Unknown error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ ok: false, error: e?.message || "Unknown error" }, { status: 500 });
   }
 }
