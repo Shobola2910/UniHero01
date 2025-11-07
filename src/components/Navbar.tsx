@@ -40,4 +40,35 @@ export default function Navbar() {
         <nav className="hidden items-center gap-3 md:flex">
           {links.map((n) => (
             <a key={n.href} href={n.href} className="uh-pill uh-floaty">
-              <spa
+              <span className="text-white">{n.icon}</span>
+              <span className="tracking-wide">{n.label}</span>
+            </a>
+          ))}
+        </nav>
+
+        {/* Mobile burger */}
+        <button
+          className="md:hidden rounded-lg border border-white/20 px-3 py-2 text-sm"
+          onClick={() => setOpen((v) => !v)}
+          aria-label="Toggle menu"
+        >
+          Menu
+        </button>
+      </div>
+
+      {/* Mobile dropdown */}
+      {open && (
+        <div className="md:hidden" style={{ background: 'var(--uh-bg-soft)', borderTop: '1px solid rgba(255,255,255,.1)' }}>
+          <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-3">
+            {links.map((n) => (
+              <a key={n.href} href={n.href} className="uh-pill" onClick={() => setOpen(false)}>
+                <span className="text-white">{n.icon}</span>
+                <span>{n.label}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}
