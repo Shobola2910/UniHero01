@@ -1,49 +1,34 @@
 // src/components/Hero.tsx
-import Badges from "./Badges";
-
 export default function Hero() {
   return (
-    <section id="home" className="py-16 md:py-24">
-      <div className="mx-auto grid max-w-6xl items-center gap-8 px-4 md:grid-cols-2">
-        <div>
-          <p className="mb-3 text-sm text-zinc-400">✨ For Students, By Students</p>
-          <h1 className="text-4xl font-extrabold tracking-tight md:text-5xl">
-            UniHero — For Students, By Students
-          </h1>
-          <p className="mt-4 text-zinc-300">
-            Practical resources, a helpful community, and simple tools.
-            Learn smarter with study guides, templates and quick support.
-          </p>
-          <div className="mt-6 flex gap-3">
-            <a className="inline-flex items-center justify-center rounded-2xl bg-indigo-600 px-5 py-3 font-semibold text-white hover:bg-indigo-500" href="https://t.me/UniHero_News" target="_blank" rel="noreferrer">
-              Join the Community
-            </a>
-            <a className="inline-flex items-center justify-center rounded-2xl bg-white/10 px-5 py-3 font-semibold text-white hover:bg-white/20" href="#about">
-              Learn More
-            </a>
-          </div>
-          <Badges />
-        </div>
+    <section className="mx-auto max-w-6xl px-4 pt-10 pb-6 md:pt-14">
+      {/* label */}
+      <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm text-white/90">
+        <span>✨</span> <span>For Students, By Students</span>
+      </div>
 
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-[0_8px_30px_rgba(31,41,55,0.08)]">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-xl bg-white/10 p-4">
-              <p className="text-3xl font-bold">24/7</p>
-              <p className="text-sm text-zinc-300">Support availability</p>
-            </div>
-            <div className="rounded-xl bg-white/10 p-4">
-              <p className="text-3xl font-bold">🚀</p>
-              <p className="text-sm text-zinc-300">Motivation</p>
-            </div>
-            <div className="rounded-xl bg-white/10 p-4">
-              <p className="text-3xl font-bold">📝</p>
-              <p className="text-sm text-zinc-300">Assignments</p>
-            </div>
-            <div className="rounded-xl bg-white/10 p-4">
-              <p className="text-3xl font-bold">📚</p>
-              <p className="text-sm text-zinc-300">Exam Prep</p>
-            </div>
-          </div>
+      {/* katta card */}
+      <div className="mt-4 rounded-[28px] border border-white/10 bg-white/5 p-6 shadow-[0_10px_40px_rgba(1,28,64,.35)] md:p-10">
+        <h1 className="text-4xl font-extrabold tracking-tight text-white md:text-6xl">
+          UniHero — For Students, By Students
+        </h1>
+        <p className="mt-4 max-w-2xl text-white/80">
+          Practical resources, a helpful community, and simple tools. Learn smarter
+          with study guides, templates and quick support.
+        </p>
+
+        <div className="mt-6 flex gap-3">
+          <a
+            href="https://t.me/UniHero_News"
+            target="_blank"
+            rel="noreferrer"
+            className="uh-btn"
+          >
+            Join the Community
+          </a>
+          <a href="#about" className="uh-btn-ghost">
+            Learn More
+          </a>
         </div>
       </div>
     </section>
