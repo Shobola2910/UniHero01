@@ -15,18 +15,16 @@ const ITEMS: Item[] = [
 ];
 
 export default function AboutSection() {
-  // cheksiz aylanish illuziyasi uchun 2x data
   const data = useMemo(() => [...ITEMS, ...ITEMS], []);
-  const ref = useRef<HTMLDivElement>(null);
+  const scrollerRef = useRef<HTMLDivElement>(null);
   const paused = useRef(false);
 
   const [activeIdx, setActiveIdx] = useState(0);
   const [cardW, setCardW] = useState(540);
   const [gap, setGap] = useState(24);
 
-  // o'lchamlarni olish
   useEffect(() => {
-    const el = ref.current;
+    const el = scrollerRef.current;
     if (!el) return;
     const first = el.querySelector<HTMLElement>("[data-card]");
     if (first) setCardW(Math.round(first.getBoundingClientRect().width));
@@ -36,9 +34,8 @@ export default function AboutSection() {
     setGap(Number.isFinite(g) ? Math.round(g) : 24);
   }, []);
 
-  // 7s da auto-scroll + loop
   useEffect(() => {
-    const el = ref.current;
+    const el = scrollerRef.current;
     if (!el) return;
 
     const id = window.setInterval(() => {
@@ -47,7 +44,6 @@ export default function AboutSection() {
       setActiveIdx(next);
       el.scrollTo({ left: next * (cardW + gap), behavior: "smooth" });
 
-      // birinchi nusxa tugaganda ko‘rinmasdan boshiga qaytish
       if (next === ITEMS.length) {
         window.setTimeout(() => {
           el.scrollTo({ left: 0, behavior: "auto" });
@@ -59,9 +55,8 @@ export default function AboutSection() {
     return () => clearInterval(id);
   }, [activeIdx, data.length, cardW, gap]);
 
-  // trackpad/vertikal scrollni gorizontalga yo‘naltirish
   useEffect(() => {
-    const el = ref.current;
+    const el = scrollerRef.current;
     if (!el) return;
     const onWheel = (e: WheelEvent) => {
       if (Math.abs(e.deltaX) < Math.abs(e.deltaY)) el.scrollLeft += e.deltaY;
@@ -75,7 +70,7 @@ export default function AboutSection() {
   return (
     <section id="about" className="mx-auto max-w-6xl px-4 py-10 md:py-14">
       <div
-        ref={ref}
+        ref={scrollerRef}
         className="hide-scrollbar flex gap-6 overflow-x-auto snap-x snap-mandatory pb-2"
         onMouseEnter={() => (paused.current = true)}
         onMouseLeave={() => (paused.current = false)}
@@ -88,7 +83,7 @@ export default function AboutSection() {
               data-card
               className="relative shrink-0 snap-start w-[84vw] xs:w-[86vw] sm:w-[520px] md:w-[540px]"
             >
-              {/* Yonlardagi blur highlight */}
+              {/* yon blur highlight */}
               <div
                 className="pointer-events-none absolute -left-2 -top-2 right-2 bottom-10 rounded-3xl overflow-hidden opacity-0 blur-xl transition-opacity duration-300"
                 style={{ opacity: isActive ? 0.35 : 0 }}
@@ -96,7 +91,7 @@ export default function AboutSection() {
                 <Image src={it.img} alt="" fill sizes="540px" className="object-cover" />
               </div>
 
-              {/* Karta */}
+              {/* karta */}
               <div className="rounded-3xl overflow-hidden border border-white/10 bg-white/5 hover:-translate-y-1 hover:shadow-xl transition-transform">
                 <div className="relative aspect-[16/9]">
                   <Image
@@ -122,7 +117,7 @@ export default function AboutSection() {
         })}
       </div>
 
-      {/* pastdagi markaziy yozuv */}
+      {/* past markaziy yozuv */}
       <div className="mt-6 text-center">
         <h4 className="text-2xl md:text-3xl font-extrabold">🧑‍💻 {center.title}</h4>
         <div className="mx-auto mt-3 max-w-xl flex items-center gap-4">
