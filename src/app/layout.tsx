@@ -11,7 +11,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="uh-bg text-white">
-        {/* ✅ Navbar YAGONA — faqat layout’da */}
         <Navbar />
         <main>{children}</main>
       </body>
