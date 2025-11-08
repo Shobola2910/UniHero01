@@ -5,7 +5,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 type Item = { emoji: string; date: string; title: string; img: string };
 
-// 🔵 Rasm yo'llari sizda mavjud bo‘lgan papkaga mos (public/about/*)
 const ITEMS: Item[] = [
   { emoji: "🤖",      date: "2024 · Dec",  title: "UniHero Bot created",                     img: "/about/bot-created.png" },
   { emoji: "🧑‍🤝‍🧑", date: "2024 · Oct",  title: "2 anonym founders",                       img: "/about/anonym-founders.png" },
@@ -17,13 +16,11 @@ const ITEMS: Item[] = [
 export default function AboutSection() {
   const data = useMemo(() => [...ITEMS, ...ITEMS], []);
   const ref = useRef<HTMLDivElement>(null);
-
   const [activeIdx, setActiveIdx] = useState(0);
   const [cardW, setCardW] = useState(540);
   const [gap, setGap] = useState(24);
   const paused = useRef(false);
 
-  // Karta o‘lchamlari + gap ni aniqlash
   useEffect(() => {
     const el = ref.current; if (!el) return;
     const first = el.querySelector<HTMLElement>("[data-card]");
@@ -32,7 +29,6 @@ export default function AboutSection() {
     setGap(Math.round(parseFloat(style.columnGap || style.gap || "24")));
   }, []);
 
-  // 7 soniyada skroll + loop
   useEffect(() => {
     const el = ref.current; if (!el) return;
     const id = setInterval(() => {
@@ -40,8 +36,6 @@ export default function AboutSection() {
       const next = (activeIdx + 1) % data.length;
       setActiveIdx(next);
       el.scrollTo({ left: next * (cardW + gap), behavior: "smooth" });
-
-      // 1-kopiyani ko‘rsatishdan keyin boshiga qaytish
       if (next === ITEMS.length) {
         setTimeout(() => { el.scrollTo({ left: 0, behavior: "auto" }); setActiveIdx(0); }, 420);
       }
@@ -49,7 +43,6 @@ export default function AboutSection() {
     return () => clearInterval(id);
   }, [activeIdx, data.length, cardW, gap]);
 
-  // Vertikal skrollni gorizontalga aylantirish (trackpad/phone)
   useEffect(() => {
     const el = ref.current; if (!el) return;
     const onWheel = (e: WheelEvent) => {
@@ -73,14 +66,12 @@ export default function AboutSection() {
           const isActive = idx === activeIdx;
           return (
             <article key={`${it.title}-${idx}`} data-card className="relative w-[84vw] shrink-0 snap-start xs:w-[86vw] sm:w-[520px] md:w-[540px]">
-              {/* fon blur highlight */}
               <div
                 className="pointer-events-none absolute -left-2 -top-2 right-2 bottom-10 overflow-hidden rounded-3xl opacity-0 blur-xl transition-opacity duration-300"
                 style={{ opacity: isActive ? 0.35 : 0 }}
               >
                 <Image src={it.img} alt="" fill className="object-cover" sizes="540px" />
               </div>
-
               <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 transition-transform hover:-translate-y-1 hover:shadow-xl">
                 <div className="relative aspect-[16/9]">
                   <Image src={it.img} alt={it.title} fill className="object-cover" sizes="540px" priority={idx < 2} />
