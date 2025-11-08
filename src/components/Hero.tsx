@@ -1,36 +1,44 @@
-// src/components/Hero.tsx
+"use client";
+import React from "react";
+import Link from "next/link";
+
 export default function Hero() {
   return (
-    <section id="home" className="mx-auto max-w-6xl px-4 py-10 md:py-14">
-      <div className="uh-card bg-white/5 p-6 md:p-10">
-        <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm">
-          ✨ For Students, By Students
-        </span>
+    <section className="mx-auto max-w-6xl px-4 py-10 md:py-14">
+      <div className="uh-card rounded-3xl bg-[#0b274a]/85 p-6 md:p-8">
+        {/* Tag */}
+        <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm font-semibold text-white">
+          <span>✨</span>
+          <span>For Students, By Students</span>
+        </div>
 
-        <h1 className="mt-4 text-4xl font-extrabold leading-tight md:text-5xl">
-          UniHero — For <br className="hidden sm:block" />
-          Students, By Students
+        {/* Title */}
+        <h1 className="text-4xl font-extrabold leading-tight md:text-5xl">
+          UniHero — For Students, By Students
         </h1>
 
-        <p className="mt-3 max-w-2xl text-white/80">
-          Practical resources, a helpful community, and simple tools. Learn smarter with study guides,
-          templates and quick support.
+        {/* Subtext */}
+        <p className="mt-4 max-w-3xl text-white/85">
+          Practical resources, a helpful community, and simple tools. Learn smarter with study
+          guides, templates and quick support.
         </p>
 
-        <div className="mt-6 flex flex-wrap gap-3">
+        {/* Buttons */}
+        <div className="mt-6 flex flex-wrap items-center gap-4">
           <a
             href="https://t.me/UniHero_news"
             target="_blank"
-            className="rounded-xl bg-[#54ACBF] px-4 py-2 font-semibold text-[#011C40] hover:opacity-90"
+            className="rounded-xl bg-[#26658C] px-5 py-3 font-bold text-white hover:bg-[#2d7099]"
           >
             Join the Community
           </a>
-          <a
+
+          <Link
             href="#about"
-            className="rounded-xl border border-white/30 px-4 py-2 font-semibold hover:bg-white/10"
+            className="rounded-xl border border-white/20 px-5 py-3 font-bold text-white hover:bg-white/10"
           >
             Learn More
-          </a>
+          </Link>
         </div>
       </div>
     </section>
