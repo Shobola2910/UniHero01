@@ -1,16 +1,17 @@
 // src/app/page.tsx
-
-import Hero from "@/components/Hero";
+import Navbar from "@/components/Navbar";
 import AboutSection from "@/components/about/AboutSection";
 import ResourcesSection from "@/components/sections/Resources";
+// Agar Contact bo‘limingiz bo‘lmasa, importni va JSXni olib tashlang yoki keyin qo‘shasiz:
 import ContactSection from "@/components/ContactSection";
 
 export default function HomePage() {
   return (
     <main>
-      <section id="home">
-        <Hero />
-      </section>
+      <Navbar />
+
+      {/* Hero bo‘limingiz alohida bo‘lsa, shu yerga qo‘ying (ixtiyoriy) */}
+      {/* <Hero /> */}
 
       <section id="about">
         <AboutSection />
