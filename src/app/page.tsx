@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import AboutSection from "@/components/about/AboutSection";
 import ResourcesSection from "@/components/sections/Resources";
 import ContactSection from "@/components/ContactSection";
+import AboutSection from "@/components/about/AboutSection";
 
 export default function HomePage() {
   return (
