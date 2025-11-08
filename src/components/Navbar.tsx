@@ -1,99 +1,64 @@
-// src/components/Navbar.tsx
 "use client";
-
+import React from "react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
 
-type NavItem = { href: string; label: string; icon: React.ReactNode };
+type Nav = { href: string; label: string; icon: React.ReactNode };
 
 const IconHome = (
   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M3 10.5L12 3l9 7.5" /><path d="M5 10v10h14V10" />
+    <path d="M3 10.5 12 3l9 7.5" />
+    <path d="M5 9.5V21h14V9.5" />
   </svg>
 );
 const IconAbout = (
   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="12" cy="12" r="9" /><path d="M12 8v8M12 16h.01" />
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 8h.01M11 12h2v6h-2z" />
   </svg>
 );
-const IconRes = (
-  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
-    <rect x="3" y="4" width="18" height="14" rx="2" /><path d="M7 8h10M7 12h10M7 16h6" />
+const IconBook = (
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M4 19.5V5.5a2 2 0 0 1 2-2h5v16H6a2 2 0 0 1-2-2z" />
+    <path d="M13 3.5h5a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2h-5z" />
   </svg>
 );
-const IconContact = (
+const IconPhone = (
   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M21 15v4a2 2 0 0 1-2 2H5l-3 3V5a2 2 0 0 1 2-2h11" />
-    <path d="M22 2l-10 10" /><path d="M15 2h7v7" />
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.08 4.18 2 2 0 0 1 4.06 2h3a2 2 0 0 1 2 1.72c.13.98.36 1.93.68 2.84a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.24-1.2a2 2 0 0 1 2.1-.45c.91.32 1.86.55 2.84.68A2 2 0 0 1 22 16.92z" />
   </svg>
 );
 
-const NAV: NavItem[] = [
-  { href: "#home",      label: "Home",      icon: IconHome },
-  { href: "#about",     label: "About",     icon: IconAbout },
-  { href: "#resources", label: "Resources", icon: IconRes },
-  { href: "#contact",   label: "Contact",   icon: IconContact },
+const NAVS: Nav[] = [
+  { href: "#home", label: "HOME", icon: IconHome },
+  { href: "#about", label: "ABOUT", icon: IconAbout },
+  { href: "#resources", label: "RESOURCE", icon: IconBook },
+  { href: "#contact", label: "CONTACT", icon: IconPhone },
 ];
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
-
-  // hash'li link bosilganda mobil menyuni yopish
-  useEffect(() => {
-    const onHash = () => setOpen(false);
-    window.addEventListener("hashchange", onHash);
-    return () => window.removeEventListener("hashchange", onHash);
-  }, []);
-
   return (
-    <header className="sticky top-0 z-40 backdrop-blur bg-[#021024]/60 border-b border-white/10">
-      <nav className="mx-auto max-w-6xl px-4 py-3 flex items-center gap-4">
-        <Link href="#home" className="font-extrabold text-white text-xl flex items-center gap-2">
-          <span className="inline-grid place-items-center rounded-md bg-white/10 w-8 h-8">U</span>
-          UniHero
-        </Link>
-
-        <button
-          className="ml-auto md:hidden rounded-md border border-white/10 px-3 py-2 text-white"
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-          aria-controls="uh-mobile-nav"
-        >
-          Menu
-        </button>
-
-        <ul className="hidden md:flex items-center gap-1 ml-auto">
-          {NAV.map((n) => (
-            <li key={n.href}>
-              <a
-                href={n.href}
-                className="uh-pill inline-flex items-center gap-2 rounded-full px-4 py-2 text-white/90 hover:bg-white/10"
-              >
-                {n.icon}<span>{n.label}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
-      {/* mobile */}
-      {open && (
-        <div id="uh-mobile-nav" className="md:hidden border-t border-white/10 bg-[#021024]/80">
-          <ul className="mx-auto max-w-6xl px-4 py-2 grid gap-2">
-            {NAV.map((n) => (
-              <li key={n.href}>
-                <a
-                  href={n.href}
-                  className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-white/10 text-white"
-                  onClick={() => setOpen(false)}
-                >
-                  {n.icon}<span>{n.label}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
+    <header id="home" className="safe-pt">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+        {/* Logo */}
+        <div className="flex items-center gap-3">
+          <img src="/brand/logo-light.png" alt="UniHero" className="h-9 w-9" />
+          <span className="text-2xl font-extrabold tracking-wide">UniHero</span>
         </div>
-      )}
+
+        {/* Pills */}
+        <nav className="flex flex-wrap items-center gap-3">
+          {NAVS.map((n) => (
+            <Link
+              key={n.href}
+              href={n.href}
+              className="uh-pill flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-bold tracking-wide hover:bg-white/10"
+            >
+              <span className="opacity-95">{n.icon}</span>
+              <span>{n.label}</span>
+            </Link>
+          ))}
+        </nav>
+      </div>
     </header>
   );
 }
