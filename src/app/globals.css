@@ -1,119 +1,33 @@
-/* --- Tailwind layers --- */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ---------------------------
-   Design tokens (LUNA palette)
-----------------------------*/
-:root{
-  /* Palette (dark-first) */
-  --uh-bg:            #011C40; /* very dark navy */
-  --uh-bg-soft:       #023859; /* dark teal */
-  --uh-accent:        #54ACBF; /* primary */
-  --uh-accent-weak:   #26658C; /* secondary */
-  --uh-accent-bright: #A7EBF2; /* bright tint for focus/selection */
-  --uh-text:          #EAF3F7; /* base text on dark */
-  --uh-text-inv:      #ffffff; /* pure white */
-  --uh-surface:       rgba(2,56,89,.55); /* glass surface tint */
-
-  --uh-radius: 16px;
-  --uh-blur:   12px;
-
-  color-scheme: dark;
+/* --- LUNA palette / brand tokens --- */
+:root {
+  --uh-bg:#011C40;
+  --uh-bg-soft:#023859;
+  --uh-accent:#26658C;
+  --uh-accent-weak:#54ACBF;
+  --uh-surface:#A7EBF2;
+  --uh-text:#e6eef8;
 }
 
 html, body { height: 100%; }
-body{
-  background-color: var(--uh-bg);
-  color: var(--uh-text);
-}
 
-/* Optional light theme (agar kerak bo‘lsa <body class="light">) */
-.light{
-  --uh-text:#0b1220;
-  color-scheme: light;
-}
-
-/* ---------------------------
-   Background layer (hero/app)
-----------------------------*/
-.uh-bg{
+/* App background gradient */
+.uh-bg {
   background:
-    radial-gradient(900px 500px at 14% -8%,  rgba(167,235,242,.10), transparent 65%),
-    radial-gradient(720px 400px at 86% -6%, rgba(84,172,191,.12),  transparent 60%),
+    radial-gradient(900px 500px at 15% -10%, rgba(125,160,202,.16), transparent 65%),
+    radial-gradient(700px 380px at 85% 0%,   rgba(84,131,179,.12),  transparent 60%),
     linear-gradient(180deg, var(--uh-bg-soft) 0%, var(--uh-bg) 100%);
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-}
-@supports (-webkit-touch-callout:none){ .uh-bg{ background-attachment: scroll; }}
-
-/* ---------------------------
-   Components / helpers
-----------------------------*/
-
-/* Glass card */
-.uh-card{
-  border-radius: var(--uh-radius);
-  border: 1px solid rgba(255,255,255,.08);
-  background: var(--uh-surface);
-  backdrop-filter: blur(var(--uh-blur));
-  box-shadow: 0 10px 40px rgba(1,28,64,.35);
+  background-repeat:no-repeat;
+  background-attachment:fixed;
 }
 
-/* Pill (Navbar, chips) */
-.uh-pill{
-  @apply inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm transition;
-  border: 1px solid color-mix(in oklab, var(--uh-accent-weak) 50%, white 0%);
-  background: transparent;
-  color: rgba(255,255,255,.92);
-  backdrop-filter: blur(6px);
-}
-.uh-pill:hover{
-  border-color: var(--uh-accent);
-  background: color-mix(in oklab, var(--uh-accent-weak) 18%, transparent);
-  color: #fff;
-}
+/* Card + hover */
+.uh-card { @apply border border-white/10 shadow-[0_10px_40px_rgba(2,16,36,.35)]; }
+.uh-pill { @apply transition-transform; }
+.uh-pill:hover { transform: translateY(-1px); }
 
-/* Primary button (istalgan joyda ishlatish uchun) */
-.uh-btn{
-  @apply inline-flex items-center justify-center font-semibold rounded-2xl px-5 py-3 transition;
-  color: var(--uh-text-inv);
-  background: var(--uh-accent);
-  box-shadow: 0 8px 24px rgba(84,172,191,.28);
-}
-.uh-btn:hover{ background: color-mix(in oklab, var(--uh-accent) 88%, white 12%); }
-
-/* Subtitle button */
-.uh-btn-ghost{
-  @apply inline-flex items-center justify-center font-semibold rounded-2xl px-5 py-3 transition;
-  color: #fff;
-  background: rgba(255,255,255,.08);
-}
-.uh-btn-ghost:hover{ background: rgba(255,255,255,.14); }
-
-/* Horizontal carousels – scrollbarni yashirish */
-.hide-scrollbar{ -ms-overflow-style:none; scrollbar-width:none; }
-.hide-scrollbar::-webkit-scrollbar{ display:none; }
-
-/* Safe areas */
-.safe-px{ padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
-.safe-pt{ padding-top:  env(safe-area-inset-top); }
-.safe-pb{ padding-bottom: env(safe-area-inset-bottom); }
-@supports(padding:max(0px)){
-  .safe-top{    padding-top:    max(env(safe-area-inset-top), .75rem); }
-  .safe-bottom{ padding-bottom: max(env(safe-area-inset-bottom), .75rem); }
-}
-
-/* Hover float (ixtiyoriy) */
-@keyframes uh-floaty{ 0%{transform:translateY(0) scale(1);} 50%{transform:translateY(-2px) scale(1.02);} 100%{transform:translateY(0) scale(1);} }
-.uh-floaty:hover{ animation: uh-floaty 600ms ease-out; }
-
-/* Focus & selection */
-:focus-visible{ outline:2px solid var(--uh-accent-bright); outline-offset:2px; }
-::selection{ background: var(--uh-accent-bright); color: var(--uh-bg); }
-
-/* Reduce motion */
-@media (prefers-reduced-motion: reduce){
-  *{ animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; scroll-behavior:auto!important; }
-}
+/* Safe area (iOS) */
+.safe-pt { padding-top: env(safe-area-inset-top); }
